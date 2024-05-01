@@ -31,7 +31,7 @@ export default function RootLayout({
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <Link
                   className="flex items-center gap-2 font-semibold"
-                  href="#"
+                  href="/"
                 >
                   <Image
                     alt="Studyfree"

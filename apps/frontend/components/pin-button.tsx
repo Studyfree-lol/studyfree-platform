@@ -6,11 +6,11 @@ import { PinIcon, PinOffIcon } from "lucide-react";
 export default function PinButton({ course }: { course: PinnedCourse }) {
   const { pinnedCourses, addPinnedCourse, removePinnedCourse } = useStore();
 
-  const isSelected = pinnedCourses.some((c) => c.id === course.id);
+  const isSelected = pinnedCourses.some((c) => c.courseId === course.courseId);
 
   const togglePinned = () => {
     if (isSelected) {
-      removePinnedCourse(course.id);
+      removePinnedCourse(course.courseId);
     } else {
       addPinnedCourse(course);
     }

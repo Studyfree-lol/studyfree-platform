@@ -8,7 +8,8 @@ type Store = {
 };
 
 export interface PinnedCourse {
-  id: string;
+  courseId: string;
+  universityId: string;
   title: string;
 }
 
@@ -23,7 +24,7 @@ export const useStore = create<Store>()(
       removePinnedCourse: (id) =>
         set((state) => ({
           pinnedCourses: state.pinnedCourses.filter(
-            (course) => course.id !== id,
+            (course) => course.courseId !== id,
           ),
         })),
     }),
