@@ -1,5 +1,5 @@
 <p align="center">
-  ![StudyFree](https://raw.githubusercontent.com/Studyfree-lol/studyfree-platform/main/docs/images/logo.png)
+  <img src="https://raw.githubusercontent.com/Studyfree-lol/studyfree-platform/main/docs/images/logo.png">
 </p>
 
 # studyfree-platform
