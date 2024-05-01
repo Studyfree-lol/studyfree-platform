@@ -74,7 +74,7 @@ paths:
       summary: Get specific Document
       description: retrieve a meta information about a specific document
       parameters:
-        - name: documentId
+        - name: courseId
           required: true
           in: path
           schema:
