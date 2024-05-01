@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'https'
 paths:
-  /documents/{documentId}:
+  /courses/{courseId}/documents:
     get:
       tags:
         - documents
@@ -25,7 +25,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.Document"
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.Document"
         "400":
           description: Bad Request
           content: { }
@@ -41,10 +43,16 @@ components:
     model.Document:
       type: object
       required:
-        - branch
-        - commit
+        - title
+        - fileUrl
+        - thumbUrl
+        - tag
       properties:
-        branch:
+        title:
           type: string
-        commit:
+        fileUrl:
+          type: string
+        thumbUrl:
+          type: string
+        tag:
           type: string

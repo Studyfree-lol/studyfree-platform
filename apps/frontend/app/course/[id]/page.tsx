@@ -51,7 +51,7 @@ export default function Course() {
         </div>
       </section>
 
-      <div className="flex flex-col gap-4 py-7">
+      <div className="grid grid-cols-2 gap-4 py-7">
         <DocumentCard />
         <DocumentCard />
         <DocumentCard />
