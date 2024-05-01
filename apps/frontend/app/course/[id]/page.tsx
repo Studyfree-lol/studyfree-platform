@@ -1,3 +1,4 @@
+import DocumentCard from "@/components/document-card";
 import { FilterDropdown } from "@/components/filter-dropdown";
 import { TypographyH1, TypographyH2 } from "@/components/typographie";
 import {
@@ -49,6 +50,12 @@ export default function Course() {
           </FilterDropdown>
         </div>
       </section>
+
+      <div className="flex flex-col gap-4 py-7">
+        <DocumentCard />
+        <DocumentCard />
+        <DocumentCard />
+      </div>
     </div>
   );
 }
