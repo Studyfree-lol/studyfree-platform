@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   BellIcon,
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <div className="grid min-h-screen max-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
           <div className="hidden border-r bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
@@ -39,7 +40,13 @@ export default function RootLayout({
                   className="flex items-center gap-2 font-semibold"
                   href="#"
                 >
-                  <span className="">LOL</span>
+                  <Image
+                    alt="Studyfree"
+                    height={18}
+                    src="/img/logo.png"
+                    width={18}
+                  />
+                  <span className="">Studyfree</span>
                 </Link>
                 <Button
                   className="ml-auto h-8 w-8"
@@ -58,8 +65,8 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-          <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <div className="flex flex-col max-h-screen">
+            <header className="flex h-14 flex-shrink-0 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -91,7 +98,7 @@ export default function RootLayout({
                 </form>
               </div>
             </header>
-            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            <main className="flex flex-1 flex-col overflow-y-auto gap-4 p-4 lg:gap-6 lg:p-6">
               {children}
             </main>
           </div>

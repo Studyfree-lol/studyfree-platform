@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function UploadCard() {
   return (
@@ -17,9 +18,11 @@ export default function UploadCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button className="w-full" size="sm">
-          Upload
-        </Button>
+        <Link href="/upload">
+          <Button className="w-full" size="sm">
+            Upload
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );
