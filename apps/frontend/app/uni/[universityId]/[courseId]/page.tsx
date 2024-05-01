@@ -1,3 +1,4 @@
+"use client";
 import DocumentCard from "@/components/document-card";
 import { FilterDropdown } from "@/components/filter-dropdown";
 import PinButton from "@/components/pin-button";
@@ -11,19 +12,21 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { FilterIcon, PinIcon, Settings } from "lucide-react";
+import { FilterIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 
 export default function Course() {
+  const { universityId } = useParams();
   return (
     <div>
       <Breadcrumb className="pb-7">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Universities</BreadcrumbLink>
+            <BreadcrumbLink href="/uni">Universities</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/components">
+            <BreadcrumbLink href={`/uni/${universityId}`}>
               Technische Universität München
             </BreadcrumbLink>
           </BreadcrumbItem>
