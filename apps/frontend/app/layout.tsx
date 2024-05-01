@@ -4,15 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  BellIcon,
-  FolderPlusIcon,
-  GithubIcon,
-  MenuIcon,
-  PinIcon,
-  PlusIcon,
-  SearchIcon,
-} from "lucide-react";
+import { BellIcon, GithubIcon, MenuIcon, SearchIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import UploadCard from "@/components/upload-card";

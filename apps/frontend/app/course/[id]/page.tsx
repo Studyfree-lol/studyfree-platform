@@ -1,5 +1,6 @@
 import DocumentCard from "@/components/document-card";
 import { FilterDropdown } from "@/components/filter-dropdown";
+import PinButton from "@/components/pin-button";
 import { TypographyH1, TypographyH2 } from "@/components/typographie";
 import {
   Breadcrumb,
@@ -34,9 +35,9 @@ export default function Course() {
       </Breadcrumb>
       <TypographyH1>
         Einführung in die Informatik
-        <Button variant="ghost" size="icon" className="ml-3">
-          <PinIcon className="h-5 w-5" />
-        </Button>
+        <PinButton
+          course={{ id: "abc", title: "Einführung in die Informatik" }}
+        />
       </TypographyH1>
 
       <section className="mt-8">
