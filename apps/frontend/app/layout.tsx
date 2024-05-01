@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   BellIcon,
   FolderPlusIcon,
+  GithubIcon,
   MenuIcon,
   PinIcon,
   PlusIcon,
@@ -85,8 +86,8 @@ export default function RootLayout({
                   </div>
                 </SheetContent>
               </Sheet>
-              <div className="w-full flex-1">
-                <form>
+              <div className="w-full flex justify-between">
+                <form className="w-full">
                   <div className="relative">
                     <SearchIcon className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -96,6 +97,14 @@ export default function RootLayout({
                     />
                   </div>
                 </form>
+                <Link
+                  target="_blank"
+                  href="https://github.com/Studyfree-lol/studyfree-platform"
+                >
+                  <Button size="icon" variant="ghost">
+                    <GithubIcon className="h-5 w-5" />
+                  </Button>
+                </Link>
               </div>
             </header>
             <main className="flex flex-1 flex-col overflow-y-auto gap-4 p-4 lg:gap-6 lg:p-6">
