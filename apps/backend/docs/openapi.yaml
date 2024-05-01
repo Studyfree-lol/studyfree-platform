@@ -68,6 +68,47 @@ paths:
           content: { }
 
   /courses/{courseId}/documents:
+    post:
+      tags:
+        - documents
+      summary: Push a new Document
+      description: Push a new document to the courses
+      parameters:
+        - name: courseId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+        - name: name
+          required: true
+          in: query
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/pdf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.Document"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
     get:
       tags:
         - documents

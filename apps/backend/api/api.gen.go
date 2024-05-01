@@ -32,6 +32,11 @@ type ModelUniversityPreview struct {
 	Title string             `json:"title"`
 }
 
+// PostCoursesCourseIdDocumentsParams defines parameters for PostCoursesCourseIdDocuments.
+type PostCoursesCourseIdDocumentsParams struct {
+	Name string `form:"name" json:"name"`
+}
+
 // GetUniversitiesParams defines parameters for GetUniversities.
 type GetUniversitiesParams struct {
 	Search *string `form:"search,omitempty" json:"search,omitempty"`
@@ -42,6 +47,9 @@ type ServerInterface interface {
 	// Get specific Document
 	// (GET /courses/{courseId}/documents)
 	GetCoursesCourseIdDocuments(c *fiber.Ctx, courseId openapi_types.UUID) error
+	// Push a new Document
+	// (POST /courses/{courseId}/documents)
+	PostCoursesCourseIdDocuments(c *fiber.Ctx, courseId openapi_types.UUID, params PostCoursesCourseIdDocumentsParams) error
 	// Get all Universities
 	// (GET /universities)
 	GetUniversities(c *fiber.Ctx, params GetUniversitiesParams) error
@@ -71,6 +79,46 @@ func (siw *ServerInterfaceWrapper) GetCoursesCourseIdDocuments(c *fiber.Ctx) err
 	}
 
 	return siw.Handler.GetCoursesCourseIdDocuments(c, courseId)
+}
+
+// PostCoursesCourseIdDocuments operation middleware
+func (siw *ServerInterfaceWrapper) PostCoursesCourseIdDocuments(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "courseId" -------------
+	var courseId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "courseId", c.Params("courseId"), &courseId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter courseId: %w", err).Error())
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostCoursesCourseIdDocumentsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Required query parameter "name" -------------
+
+	if paramValue := c.Query("name"); paramValue != "" {
+
+	} else {
+		err = fmt.Errorf("Query argument name is required, but not found")
+		c.Status(fiber.StatusBadRequest).JSON(err)
+		return err
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "name", query, &params.Name)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter name: %w", err).Error())
+	}
+
+	return siw.Handler.PostCoursesCourseIdDocuments(c, courseId, params)
 }
 
 // GetUniversities operation middleware
@@ -136,6 +184,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/courses/:courseId/documents", wrapper.GetCoursesCourseIdDocuments)
 
+	router.Post(options.BaseURL+"/courses/:courseId/documents", wrapper.PostCoursesCourseIdDocuments)
+
 	router.Get(options.BaseURL+"/universities", wrapper.GetUniversities)
 
 	router.Get(options.BaseURL+"/universities/:universityId", wrapper.GetUniversitiesUniversityId)
@@ -145,17 +195,18 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/9RWwW7bMAz9FYHb0Yiztbv4trXbEAzYihU5FTmoFpOosCWVojIYgf99kOzESZ0tRS9F",
-	"T1Ek8vFR74nwFkpbO2vQsIdiC75cYy3TsrYKq8m1LUONhuOOI+uQWGM6X+oK51TFJTcOoQDPpM0K2gxY",
-	"rk7vr0N9/88kzRWeOGkzIHwMmlBBcdeHZfv6B6hd4UW2Q7D3D1hyxO6amRu9QfKamxvCjcY/4660Sr1Z",
-	"qiVDASFoBdmLuXbJKXbMKgZrs7QRRqEvSTvW1kABtxxUsyRE8flmtkcY76dmUsaHyXQyjcSsQyOdhgIu",
-	"JtPJBWTgJK9Ta3lpA3n0+bZbzFSbq17eFLBCHnMhZNK4QSFFjSxFZBwvR1sj5L0NLKTwDku91KXYwUEi",
-	"QilqpqCA78hXXfWrvvb1vnKkSLJGRvJQ3G1Bx7qRNmRgZB073zGGw/tlCpj1ln2Gau0iJntnje+0/jid",
-	"xp/SGu4dLp2rdJlo5w8+9r89wNeMdUp8T7iEAt7lw+PJ+5eTP3k27Z6GJJJNp/rxDf/6EaMuOzLHR1+k",
-	"Er/xMaDnLuZyHPPTsvhmg1Ex4tMplJlhJCMrcYu0QRJfiSwlr/pQ15KaTqBBxutBRparKAoMRlnExDzs",
-	"nlL/bs54p6rEUcYJf8yPz0954jEgNYMpPEoqo0kGiV5R8vFweUvaR4WeKLCT/ki4sfr5dv+vman2vBnS",
-	"GFGSpVhaEnIwRiO0KaugtFmJfladM8r8oPSzBkk4Tni9YfIiQ72F4THQ/o+HYnrC64QK8ZMA1szOQ7to",
-	"/wYAAP//3RtUa5YIAAA=",
+	"H4sIAAAAAAAC/+xWTW/bOBD9K8TsHgXLu8ledNsku4VRoDUa+BT4QItjm4FEKsOhA8HQfy9IyZ9S4iCH",
+	"tgF6kizOvHnD9zj0FnJbVtagYQfZFly+xlLG19IqLEZ3NvclGg5fKrIVEmuM60td4IyK8Mp1hZCBY9Jm",
+	"BU0CLFfD39e+XLyYpLnAgZUmAcInrwkVZA9dWLKvf4TaFp4nOwS7eMScA3bbzMzoDZLTXE8JNxqf+11p",
+	"FXuzVEqGDLzXCpJ3c22TY2yfVQjWZmkDjEKXk65YWwMZ3LNX9ZIQxb/TyR6h/z02EzP+Go1H40DMVmhk",
+	"pSGDq9F4dAUJVJLXsbU0t54cunTbvkxUk6pO3hiwQu5zIWTSuEEhRYksRWAcNkdbI+TCehZSuApzvdS5",
+	"2MFBJEIxaqIgg0/It23126723b5yoEiyREZykD1sQYe6gTYkYGQZOt8xhuP9ZfKYdJZ9g2rNPCS7yhrX",
+	"av33eBweuTXcOVxWVaHzSDt9dKH/7RG+Zixj4p+ES8jgj/RweNLu5KRnx6bZ05BEsm5VP93hr59D1HVL",
+	"5nTpRirxDZ88Om5jrvsxXyyL/603KkT8M4QyMYxkZCHukTZI4j8iS9GrzpelpLoV6CDj3UFGlqsgChyM",
+	"Mm8SqKwbsMrUu7WQwuDz3giCreA1is56PV9MrfsFjJF00E8eqT5gx8druIMGi2rdWFW/4q1KLU+ttWe4",
+	"0EZGDufY7Wj57d5B9x4574J3mwRSv7sGupl/Ye4VhTjJGJhts9P1IdueecuhpDz4+IKbfozg/YvxI82t",
+	"oNCZAjvpT4Trq59u97/qiWoumyFegUqyFEtLQh6MUQtt8sIrbVYvDrszo8yOSr9p1vnThJ93Eb7LUB/h",
+	"4jvQfsVDIT3itUL58HcW1syVg2befA8AAP//fuA/JVILAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
