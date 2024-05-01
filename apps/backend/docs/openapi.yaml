@@ -6,6 +6,67 @@ info:
 servers:
   - url: 'https'
 paths:
+  /universities:
+    get:
+      tags:
+        - universities
+      summary: Get all Universities
+      description: retrieve all universities
+      parameters:
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.UniversityPreview"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
+  /universities/{universityId}:
+    get:
+      tags:
+        - universities
+      summary: Get specific University
+      description: retrieve meta data for a university including courses
+      parameters:
+        - name: universityId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.UniversityPreview"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
   /courses/{courseId}/documents:
     get:
       tags:
@@ -40,6 +101,50 @@ paths:
 
 components:
   schemas:
+    model.UniversityPreview:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+    model.University:
+      allOf:
+        - $ref: "#/components/schemas/model.UniversityPreview"
+        - type: object
+          required:
+            - courses
+          properties:
+            courses:
+              type: array
+              items:
+                $ref: "#/components/schemas/model.CoursePreview"
+    model.CoursePreview:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+    model.Course:
+      allOf:
+        - $ref: "#/components/schemas/model.CoursePreview"
+        - type: object
+          required:
+            - documents
+          properties:
+            documents:
+              type: array
+              items:
+                $ref: "#/components/schemas/model.Document"
     model.Document:
       type: object
       required:

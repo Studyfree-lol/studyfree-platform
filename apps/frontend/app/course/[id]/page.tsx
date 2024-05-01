@@ -55,6 +55,8 @@ export default function Course() {
         <DocumentCard />
         <DocumentCard />
         <DocumentCard />
+        <DocumentCard />
+        <DocumentCard />
       </div>
     </div>
   );
