@@ -1,5 +1,5 @@
-import Image from "next/image";
+import { TypographyH1 } from "@/components/typographie";
 
-export default function Upload() {
+export default function Search() {
   return <div></div>;
 }
