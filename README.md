@@ -1,4 +1,4 @@
-![StudyFree](https://github.com/Studyfree-lol/studyfree-platform/blob/4ad6457d7f25b1db9ea88d0e59525d4ea017af5/docs/images/logo.png)
+![StudyFree](https://raw.githubusercontent.com/Studyfree-lol/studyfree-platform/main/docs/images/logo.png)
 
 # studyfree-platform
 
