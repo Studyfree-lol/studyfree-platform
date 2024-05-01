@@ -1,0 +1,43 @@
+version: "3.4"
+
+services:
+  backend:
+    platform: "linux/amd64"
+    restart: always
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    depends_on:
+      - neo4j
+    ports:
+      - "8000:8000"
+    environment:
+      MEILISEARCH_URL: http://meilisearch:7700
+      MEILISEARCH_API_TOKEN: VERY_SECRET_TOKEN
+      CORS: "*"
+      PORT: 8000
+    env_file:
+      - .env
+      - .env.local
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  meilisearch:
+    hostname: meilisearch
+    image: getmeili/meilisearch:v0.25.2
+    environment:
+      - MEILI_MASTER_KEY=VERY_SECRET_TOKEN
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_ENV=production
+      - MEILI_DB_PATH=data.ms
+    ports:
+      - 7700:7700
+    volumes:
+      - ./data.ms:/data.ms
+      - "$HOME/startgpt/meilisearch/data.ms:/data.ms"
+    restart: unless-stopped
