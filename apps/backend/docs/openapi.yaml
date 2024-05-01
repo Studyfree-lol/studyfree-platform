@@ -6,4 +6,45 @@ info:
 servers:
   - url: 'https'
 paths:
-  
+  /documents/{documentId}:
+    get:
+      tags:
+        - documents
+      summary: Get specific Document
+      description: retrieve a meta information about a specific document
+      parameters:
+        - name: documentId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.Document"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
+components:
+  schemas:
+    model.Document:
+      type: object
+      required:
+        - branch
+        - commit
+      properties:
+        branch:
+          type: string
+        commit:
+          type: string

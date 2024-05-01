@@ -14,7 +14,7 @@ export default function UploadCard() {
       <CardHeader>
         <CardTitle>🚀 Upload Docs</CardTitle>
         <CardDescription>
-          Be a ⭐️ for other Students, Upload your document now
+          Upload your document and be a ⭐️ for other Students
         </CardDescription>
       </CardHeader>
       <CardContent>
