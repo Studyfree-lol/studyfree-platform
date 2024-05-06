@@ -1,8 +1,9 @@
-"use client";
-import DocumentCard from "@/components/document-card";
-import { FilterDropdown } from "@/components/filter-dropdown";
-import PinButton from "@/components/pin-button";
-import { TypographyH1, TypographyH2 } from "@/components/typographie";
+'use client';
+import DocumentCard from '@/components/document-card';
+import { FilterDropdown } from '@/components/filter-dropdown';
+import PinButton from '@/components/pin-button';
+import Typography from '@/components/typography';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,10 +11,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { FilterIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { FilterIcon } from 'lucide-react';
+import { useParams } from 'next/navigation';
 
 export default function Course() {
   const { universityId } = useParams();
@@ -36,20 +37,20 @@ export default function Course() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <TypographyH1>
+      <Typography.H1>
         Einführung in die Informatik
         <PinButton
           course={{
-            universityId: "tum123",
-            courseId: "abc",
-            title: "Einführung in die Informatik",
+            universityId: 'tum123',
+            courseId: 'abc',
+            title: 'Einführung in die Informatik',
           }}
         />
-      </TypographyH1>
+      </Typography.H1>
 
       <section className="mt-8">
         <div className="flex justify-between items-center border-b-2 pb-2">
-          <TypographyH2>Documents</TypographyH2>
+          <Typography.H2>Documents</Typography.H2>
           <FilterDropdown>
             <Button variant="outline">
               <FilterIcon className="h-5 w-5 mr-2" />

@@ -1,4 +1,4 @@
-import { TypographyH1 } from "@/components/typographie";
+import Typography from '@/components/typography';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb';
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <TypographyH1>Technische Universität München</TypographyH1>
+      <Typography.H1>Technische Universität München</Typography.H1>
     </div>
   );
 }
