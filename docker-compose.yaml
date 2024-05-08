@@ -27,6 +27,19 @@ services:
     ports:
       - "3000:3000"
 
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: VERY_SECRET_TOKEN
+      MINIO_SECRET_KEY: VERY_SECRET_TOKEN
+    volumes:
+      - "$HOME/studyfree/minio/data:/data"
+    command: server /data
+
   meilisearch:
     hostname: meilisearch
     image: getmeili/meilisearch:v0.25.2
