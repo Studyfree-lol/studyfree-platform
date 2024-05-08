@@ -1,27 +1,15 @@
-import { TypographyH1 } from "@/components/typographie";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import AutoBreadcrumb from '@/components/auto-breadcrumb';
+import { TypographyH1 } from '@/components/typographie';
 
 export default function Home() {
   return (
     <div>
-      <Breadcrumb className="pb-7">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/uni">Universities</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Technische Universität München</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <AutoBreadcrumb
+        breadcrumbs={[
+          { label: 'Universities', href: '/uni' },
+          { label: 'Technische Universität München' },
+        ]}
+      />
       <TypographyH1>Technische Universität München</TypographyH1>
     </div>
   );

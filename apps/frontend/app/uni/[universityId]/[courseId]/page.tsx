@@ -1,48 +1,35 @@
-"use client";
-import DocumentCard from "@/components/document-card";
-import { FilterDropdown } from "@/components/filter-dropdown";
-import PinButton from "@/components/pin-button";
-import { TypographyH1, TypographyH2 } from "@/components/typographie";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { FilterIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+'use client';
+import AutoBreadcrumb from '@/components/auto-breadcrumb';
+import DocumentCard from '@/components/document-card';
+import { FilterDropdown } from '@/components/filter-dropdown';
+import PinButton from '@/components/pin-button';
+import { TypographyH1, TypographyH2 } from '@/components/typographie';
+import { Button } from '@/components/ui/button';
+import { FilterIcon } from 'lucide-react';
+import { useParams } from 'next/navigation';
 
 export default function Course() {
   const { universityId } = useParams();
   return (
     <div>
-      <Breadcrumb className="pb-7">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/uni">Universities</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href={`/uni/${universityId}`}>
-              Technische Universität München
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Einführung in die Informatik</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <AutoBreadcrumb
+        breadcrumbs={[
+          { label: 'Universities', href: '/uni' },
+          {
+            label: 'Technische Universität München',
+            href: `/uni/${universityId}`,
+          },
+          { label: 'Einführung in die Informatik' },
+        ]}
+      />
+
       <TypographyH1>
         Einführung in die Informatik
         <PinButton
           course={{
-            universityId: "tum123",
-            courseId: "abc",
-            title: "Einführung in die Informatik",
+            universityId: 'tum123',
+            courseId: 'abc',
+            title: 'Einführung in die Informatik',
           }}
         />
       </TypographyH1>
