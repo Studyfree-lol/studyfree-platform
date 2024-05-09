@@ -5,27 +5,31 @@ services:
     platform: "linux/amd64"
     restart: always
     build:
-      context: ./apps/backend
       dockerfile: Dockerfile
     depends_on:
-      - neo4j
+      - minio
+      - postgres
     ports:
       - "8000:8000"
     environment:
+      POSTGRES_URL: postgres://postgres:mysecretpassword@postgres:5432/studyfree?sslmode=disable
       MEILISEARCH_URL: http://meilisearch:7700
       MEILISEARCH_API_TOKEN: VERY_SECRET_TOKEN
       CORS: "*"
       PORT: 8000
-    env_file:
-      - .env
-      - .env.local
 
-  frontend:
-    build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
+  postgres:
+    image: postgres:15-alpine3.18
+    volumes:
+      - "$HOME/studyfree/postgres/data:/var/lib/postgresql/data"
+    expose:
+      - 5432
     ports:
-      - "3000:3000"
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=studyfree
 
   minio:
     image: minio/minio
@@ -52,5 +56,5 @@ services:
       - 7700:7700
     volumes:
       - ./data.ms:/data.ms
-      - "$HOME/startgpt/meilisearch/data.ms:/data.ms"
+      - "$HOME/studyfree/meilisearch/data.ms:/data.ms"
     restart: unless-stopped

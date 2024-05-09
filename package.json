@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm -C ./apps/frontend dev"
+    "dev": "pnpm -C ./apps/frontend dev",
+    "backend:up": "make -C ./apps/backend up"
   },
   "keywords": [],
   "author": "",
