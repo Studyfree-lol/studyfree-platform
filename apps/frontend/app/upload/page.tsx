@@ -1,8 +1,35 @@
+"use client";
 import { TypographyH1 } from "@/components/typographie";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 import { HeartIcon, UploadCloudIcon } from "lucide-react";
+import { useCallback, useState } from "react";
 
 export default function Search() {
+  const [file, setFile] = useState<File | null>(null);
+
+  const uploadFile = useCallback(async () => {
+    if (file === null) return;
+    const response = await api.POST("/courses/{courseId}/documents", {
+      params: {
+        path: {
+          courseId: "1",
+        },
+        query: {
+          name: file.name,
+          tag: "exercise",
+        },
+      },
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.set("file", file);
+        return formData;
+      },
+    });
+    console.log(response);
+  }, [file]);
+
   return (
     <div>
       <TypographyH1>Upload Documents</TypographyH1>
@@ -31,8 +58,18 @@ export default function Search() {
               Only PDF files are supported
             </p>
           </div>
-          <input id="dropzone-file" type="file" className="hidden" />
+          <input
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            id="dropzone-file"
+            type="file"
+            className="hidden"
+          />
         </label>
+      </div>
+      <div className="mt-7">
+        <Button onClick={uploadFile} disabled={file === null}>
+          Upload Document 🚀
+        </Button>
       </div>
     </div>
   );

@@ -128,7 +128,10 @@ export interface paths {
       };
       requestBody?: {
         content: {
-          "application/pdf": string;
+          "multipart/form-data": {
+            /** Format: binary */
+            file?: string;
+          };
         };
       };
       responses: {
