@@ -7,15 +7,17 @@ import (
 )
 
 type Controller struct {
-	db      *pgxpool.Pool
-	queries *database.Queries
-	minio   *minio.Client
+	db                  *pgxpool.Pool
+	queries             *database.Queries
+	minio               *minio.Client
+	documentsBucketName string
 }
 
-func New(db *pgxpool.Pool, queries *database.Queries, minio *minio.Client) *Controller {
+func New(db *pgxpool.Pool, queries *database.Queries, minio *minio.Client, documentsBucketName string) *Controller {
 	return &Controller{
-		db:      db,
-		queries: queries,
-		minio:   minio,
+		db:                  db,
+		queries:             queries,
+		minio:               minio,
+		documentsBucketName: documentsBucketName,
 	}
 }

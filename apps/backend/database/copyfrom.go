@@ -44,44 +44,6 @@ func (q *Queries) CreateCourses(ctx context.Context, arg []CreateCoursesParams) 
 	return q.db.CopyFrom(ctx, []string{"courses"}, []string{"id", "created_at", "university_id", "name"}, &iteratorForCreateCourses{rows: arg})
 }
 
-// iteratorForCreateDocuments implements pgx.CopyFromSource.
-type iteratorForCreateDocuments struct {
-	rows                 []CreateDocumentsParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForCreateDocuments) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForCreateDocuments) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].ID,
-		r.rows[0].CreatedAt,
-		r.rows[0].Title,
-		r.rows[0].ThumbnailUrl,
-		r.rows[0].FileUrl,
-		r.rows[0].Tag,
-		r.rows[0].CourseID,
-	}, nil
-}
-
-func (r iteratorForCreateDocuments) Err() error {
-	return nil
-}
-
-func (q *Queries) CreateDocuments(ctx context.Context, arg []CreateDocumentsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"documents"}, []string{"id", "created_at", "title", "thumbnail_url", "file_url", "tag", "course_id"}, &iteratorForCreateDocuments{rows: arg})
-}
-
 // iteratorForCreateUniversities implements pgx.CopyFromSource.
 type iteratorForCreateUniversities struct {
 	rows                 []CreateUniversitiesParams

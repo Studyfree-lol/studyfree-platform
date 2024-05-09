@@ -22,6 +22,7 @@ func main() {
 	minioUrl := os.Getenv("MINIO_URL")
 	minioAccessKeyId := os.Getenv("MINIO_ACCESS_KEY_ID")
 	minioAccessKeySecret := os.Getenv("MINIO_ACCESS_KEY_SECRET")
+	documentsBucketName := os.Getenv("DOCUMENTS_BUCKET_NAME")
 
 	conn, err := pgxpool.New(context.Background(), postgresUrl)
 	if err != nil {
@@ -39,13 +40,21 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	if exists, err := minioClient.BucketExists(context.Background(), documentsBucketName); err != nil {
+		log.Fatalln(err)
+	} else if !exists {
+		if err := minioClient.MakeBucket(context.Background(), documentsBucketName, minio.MakeBucketOptions{}); err != nil {
+			log.Fatalln(err)
+		}
+	}
+
 	f := fiber.New(fiber.Config{
 		CaseSensitive: true,
 		StrictRouting: true,
 		AppName:       "Studyfree API",
 	})
 
-	c := controller.New(conn, queries, minioClient)
+	c := controller.New(conn, queries, minioClient, documentsBucketName)
 
 	f.Use(cors.New())
 

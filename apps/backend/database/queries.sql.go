@@ -6,6 +6,8 @@
 package database
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -16,7 +18,14 @@ type CreateCoursesParams struct {
 	Name         string
 }
 
-type CreateDocumentsParams struct {
+const createDocument = `-- name: CreateDocument :one
+INSERT INTO documents (
+    id, created_at, title, thumbnail_url, file_url, tag, course_id
+) VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id
+`
+
+type CreateDocumentParams struct {
 	ID           pgtype.UUID
 	CreatedAt    pgtype.Timestamptz
 	Title        string
@@ -26,8 +35,57 @@ type CreateDocumentsParams struct {
 	CourseID     pgtype.UUID
 }
 
+func (q *Queries) CreateDocument(ctx context.Context, arg CreateDocumentParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createDocument,
+		arg.ID,
+		arg.CreatedAt,
+		arg.Title,
+		arg.ThumbnailUrl,
+		arg.FileUrl,
+		arg.Tag,
+		arg.CourseID,
+	)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 type CreateUniversitiesParams struct {
 	ID        pgtype.UUID
 	CreatedAt pgtype.Timestamptz
 	Name      string
+}
+
+const findDocument = `-- name: FindDocument :one
+SELECT id, title, thumbnail_url, file_url, tag, course_id, updated_at, created_at FROM documents WHERE id=$1
+`
+
+func (q *Queries) FindDocument(ctx context.Context, id pgtype.UUID) (Document, error) {
+	row := q.db.QueryRow(ctx, findDocument, id)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.ThumbnailUrl,
+		&i.FileUrl,
+		&i.Tag,
+		&i.CourseID,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateDocumentFile = `-- name: UpdateDocumentFile :exec
+UPDATE documents SET file_url=$1 WHERE id=$2
+`
+
+type UpdateDocumentFileParams struct {
+	FileUrl string
+	ID      pgtype.UUID
+}
+
+func (q *Queries) UpdateDocumentFile(ctx context.Context, arg UpdateDocumentFileParams) error {
+	_, err := q.db.Exec(ctx, updateDocumentFile, arg.FileUrl, arg.ID)
+	return err
 }

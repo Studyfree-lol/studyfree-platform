@@ -85,6 +85,12 @@ paths:
           in: query
           schema:
             type: string
+        - name: tag
+          required: true
+          in: query
+          schema:
+            type: string
+            enum: ['exam', 'notes', 'slides', 'exercise']
       requestBody:
         content:
           application/pdf:
@@ -189,11 +195,15 @@ components:
     model.Document:
       type: object
       required:
+        - id
         - title
         - fileUrl
         - thumbUrl
         - tag
       properties:
+        id:
+          type: string
+          format: uuid
         title:
           type: string
         fileUrl:
