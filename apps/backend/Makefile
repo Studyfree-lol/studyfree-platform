@@ -15,7 +15,7 @@ sql-compile:
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest && \
 	sqlc generate
 
-apply-schema:
+migrate:
 	atlas schema apply \
       --url $$POSTGRES_URL \
       --to file://docs/schema.sql \
