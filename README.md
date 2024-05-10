@@ -9,7 +9,20 @@
 StudyFree is a platform that helps students to find the best resources to study for their exams. It is a platform that is built by students for students. It is
 free and open-source.
 
-## Tech-Stack
+- 🔓 Open-Source under WTFPL License
+- 🫡 Free (from students 4 students)
+- 🙋🏽‍♂️ Community driven
+- 🔌 Integrates with your favorite software
+- 🚀 State-of-the-art Stack
+
+## 🔌 Integrations
+
+| Software     | Status       | Link         |
+|--------------|--------------|--------------|
+| Raycast      | Planned      | -            |
+| Obsidian     | Planned      | -            |
+
+## ⚙️ Under the hood
 
 **Frontend**
 
@@ -24,3 +37,8 @@ free and open-source.
 - PostgreSQL
 - SQLC
 - MeiliSearch
+
+## 💜 Contribute 
+
+As we are open source and non-profit we are happy about any contributions. Specially integrations into your favorite learning or workflow software
+are amazing but hard to maintain. Your help is appreciated!
