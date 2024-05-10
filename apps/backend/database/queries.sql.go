@@ -11,11 +11,37 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type CreateCoursesParams struct {
-	ID           pgtype.UUID
-	CreatedAt    pgtype.Timestamptz
+const createCourse = `-- name: CreateCourse :one
+INSERT INTO courses (
+   university_id, name, name_short, created_at
+) VALUES ($1, $2, $3, $4)
+RETURNING id, university_id, name, name_short, updated_at, created_at
+`
+
+type CreateCourseParams struct {
 	UniversityID pgtype.UUID
 	Name         string
+	NameShort    string
+	CreatedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Course, error) {
+	row := q.db.QueryRow(ctx, createCourse,
+		arg.UniversityID,
+		arg.Name,
+		arg.NameShort,
+		arg.CreatedAt,
+	)
+	var i Course
+	err := row.Scan(
+		&i.ID,
+		&i.UniversityID,
+		&i.Name,
+		&i.NameShort,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 type CreateDocumentsParams struct {
@@ -30,8 +56,8 @@ type CreateDocumentsParams struct {
 
 const createUniversity = `-- name: CreateUniversity :one
 INSERT INTO universities (
-    name, name_short, country, city, language
-) VALUES ($1, $2, $3, $4, $5)
+    name, name_short, country, city, language, created_at
+) VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id, name, name_short, country, city, language, updated_at, created_at
 `
 
@@ -41,6 +67,7 @@ type CreateUniversityParams struct {
 	Country   string
 	City      string
 	Language  string
+	CreatedAt pgtype.Timestamptz
 }
 
 func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityParams) (University, error) {
@@ -50,6 +77,7 @@ func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityPara
 		arg.Country,
 		arg.City,
 		arg.Language,
+		arg.CreatedAt,
 	)
 	var i University
 	err := row.Scan(
@@ -65,8 +93,29 @@ func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityPara
 	return i, err
 }
 
+const findCourse = `-- name: FindCourse :one
+SELECT id, courses_populated.university_id, name, name_short, updated_at, created_at, courses_populated.university_id, university_name, university_name_short FROM courses_populated WHERE id=$1
+`
+
+func (q *Queries) FindCourse(ctx context.Context, id pgtype.UUID) (CoursesPopulated, error) {
+	row := q.db.QueryRow(ctx, findCourse, id)
+	var i CoursesPopulated
+	err := row.Scan(
+		&i.ID,
+		&i.UniversityID,
+		&i.Name,
+		&i.NameShort,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+		&i.UniversityID,
+		&i.UniversityName,
+		&i.UniversityNameShort,
+	)
+	return i, err
+}
+
 const findUniversity = `-- name: FindUniversity :one
-SELECT id, name, name_short, country, city, language, updated_at, created_at, course_ids, course_names FROM universities_populated WHERE id=$1
+SELECT id, name, name_short, country, city, language, updated_at, created_at, course_ids, course_names, course_names_short FROM universities_populated WHERE id=$1
 `
 
 func (q *Queries) FindUniversity(ctx context.Context, id pgtype.UUID) (UniversitiesPopulated, error) {
@@ -83,6 +132,7 @@ func (q *Queries) FindUniversity(ctx context.Context, id pgtype.UUID) (Universit
 		&i.CreatedAt,
 		&i.CourseIds,
 		&i.CourseNames,
+		&i.CourseNamesShort,
 	)
 	return i, err
 }

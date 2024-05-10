@@ -9,41 +9,6 @@ import (
 	"context"
 )
 
-// iteratorForCreateCourses implements pgx.CopyFromSource.
-type iteratorForCreateCourses struct {
-	rows                 []CreateCoursesParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForCreateCourses) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForCreateCourses) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].ID,
-		r.rows[0].CreatedAt,
-		r.rows[0].UniversityID,
-		r.rows[0].Name,
-	}, nil
-}
-
-func (r iteratorForCreateCourses) Err() error {
-	return nil
-}
-
-func (q *Queries) CreateCourses(ctx context.Context, arg []CreateCoursesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"courses"}, []string{"id", "created_at", "university_id", "name"}, &iteratorForCreateCourses{rows: arg})
-}
-
 // iteratorForCreateDocuments implements pgx.CopyFromSource.
 type iteratorForCreateDocuments struct {
 	rows                 []CreateDocumentsParams

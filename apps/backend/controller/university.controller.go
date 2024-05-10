@@ -58,8 +58,9 @@ func (ctr *Controller) GetUniversitiesUniversityId(c *fiber.Ctx, universityId op
 			continue
 		}
 		courses = append(courses, api.ModelCoursePreview{
-			Id:   cId,
-			Name: result.CourseNames.([]string)[i], // TODO: Find something nicer
+			Id:        cId,
+			Name:      result.CourseNames.([]string)[i], // TODO: Find something nicer
+			NameShort: result.CourseNamesShort.([]string)[i],
 		})
 	}
 

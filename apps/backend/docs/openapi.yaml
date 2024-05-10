@@ -111,7 +111,111 @@ paths:
           description: Internal Server Error
           content: { }
 
+  /universities/{universityId}/courses:
+    post:
+      tags:
+        - courses
+      summary: Create new Course for University
+      parameters:
+        - name: universityId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - nameShort
+              properties:
+                name:
+                  type: string
+                nameShort:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.CoursePreview"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
+  /courses/{courseId}:
+    get:
+      tags:
+        - courses
+      summary: Get a specific course
+      parameters:
+        - name: courseId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.Course"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
   /courses/{courseId}/documents:
+    get:
+      tags:
+        - documents
+      summary: Get documents for a specific course
+      parameters:
+        - name: courseId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.Document"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
     post:
       tags:
         - documents
@@ -135,36 +239,6 @@ paths:
             schema:
               type: string
               format: binary
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/model.Document"
-        "400":
-          description: Bad Request
-          content: { }
-        "404":
-          description: Not Found
-          content: { }
-        "500":
-          description: Internal Server Error
-          content: { }
-    get:
-      tags:
-        - documents
-      summary: Get specific Document
-      description: retrieve a meta information about a specific document
-      parameters:
-        - name: courseId
-          required: true
-          in: path
-          schema:
-            type: string
-            format: uuid
       responses:
         "200":
           description: OK
@@ -225,23 +299,38 @@ components:
       required:
         - id
         - name
+        - nameShort
       properties:
         id:
           type: string
           format: uuid
         name:
           type: string
+        nameShort:
+          type: string
     model.Course:
       allOf:
         - $ref: "#/components/schemas/model.CoursePreview"
         - type: object
           required:
-            - documents
+            - university
           properties:
-            documents:
-              type: array
-              items:
-                $ref: "#/components/schemas/model.Document"
+            university:
+              $ref: "#/components/schemas/model.CourseUniversityPreview"
+    model.CourseUniversityPreview:
+      type: object
+      required:
+        - id
+        - name
+        - nameShort
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameShort:
+          type: string
     model.Document:
       type: object
       required:

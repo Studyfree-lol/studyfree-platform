@@ -12,8 +12,21 @@ type Course struct {
 	ID           pgtype.UUID
 	UniversityID pgtype.UUID
 	Name         string
+	NameShort    string
 	UpdatedAt    pgtype.Timestamptz
 	CreatedAt    pgtype.Timestamptz
+}
+
+type CoursesPopulated struct {
+	ID                  pgtype.UUID
+	UniversityID        pgtype.UUID
+	Name                string
+	NameShort           string
+	UpdatedAt           pgtype.Timestamptz
+	CreatedAt           pgtype.Timestamptz
+	UniversityID        pgtype.UUID
+	UniversityName      string
+	UniversityNameShort string
 }
 
 type Document struct {
@@ -28,16 +41,17 @@ type Document struct {
 }
 
 type UniversitiesPopulated struct {
-	ID          pgtype.UUID
-	Name        string
-	NameShort   string
-	Country     string
-	City        string
-	Language    string
-	UpdatedAt   pgtype.Timestamptz
-	CreatedAt   pgtype.Timestamptz
-	CourseIds   interface{}
-	CourseNames interface{}
+	ID               pgtype.UUID
+	Name             string
+	NameShort        string
+	Country          string
+	City             string
+	Language         string
+	UpdatedAt        pgtype.Timestamptz
+	CreatedAt        pgtype.Timestamptz
+	CourseIds        interface{}
+	CourseNames      interface{}
+	CourseNamesShort interface{}
 }
 
 type University struct {

@@ -18,10 +18,26 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// ModelCourse defines model for model.Course.
+type ModelCourse struct {
+	Id         openapi_types.UUID           `json:"id"`
+	Name       string                       `json:"name"`
+	NameShort  string                       `json:"nameShort"`
+	University ModelCourseUniversityPreview `json:"university"`
+}
+
 // ModelCoursePreview defines model for model.CoursePreview.
 type ModelCoursePreview struct {
-	Id   openapi_types.UUID `json:"id"`
-	Name string             `json:"name"`
+	Id        openapi_types.UUID `json:"id"`
+	Name      string             `json:"name"`
+	NameShort string             `json:"nameShort"`
+}
+
+// ModelCourseUniversityPreview defines model for model.CourseUniversityPreview.
+type ModelCourseUniversityPreview struct {
+	Id        openapi_types.UUID `json:"id"`
+	Name      string             `json:"name"`
+	NameShort string             `json:"nameShort"`
 }
 
 // ModelDocument defines model for model.Document.
@@ -72,12 +88,24 @@ type PostUniversitiesJSONBody struct {
 	NameShort string `json:"nameShort"`
 }
 
+// PostUniversitiesUniversityIdCoursesJSONBody defines parameters for PostUniversitiesUniversityIdCourses.
+type PostUniversitiesUniversityIdCoursesJSONBody struct {
+	Name      string `json:"name"`
+	NameShort string `json:"nameShort"`
+}
+
 // PostUniversitiesJSONRequestBody defines body for PostUniversities for application/json ContentType.
 type PostUniversitiesJSONRequestBody PostUniversitiesJSONBody
 
+// PostUniversitiesUniversityIdCoursesJSONRequestBody defines body for PostUniversitiesUniversityIdCourses for application/json ContentType.
+type PostUniversitiesUniversityIdCoursesJSONRequestBody PostUniversitiesUniversityIdCoursesJSONBody
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Get specific Document
+	// Get a specific course
+	// (GET /courses/{courseId})
+	GetCoursesCourseId(c *fiber.Ctx, courseId openapi_types.UUID) error
+	// Get documents for a specific course
 	// (GET /courses/{courseId}/documents)
 	GetCoursesCourseIdDocuments(c *fiber.Ctx, courseId openapi_types.UUID) error
 	// Push a new Document
@@ -92,6 +120,9 @@ type ServerInterface interface {
 	// Get specific University
 	// (GET /universities/{universityId})
 	GetUniversitiesUniversityId(c *fiber.Ctx, universityId openapi_types.UUID) error
+	// Create new Course for University
+	// (POST /universities/{universityId}/courses)
+	PostUniversitiesUniversityIdCourses(c *fiber.Ctx, universityId openapi_types.UUID) error
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -100,6 +131,22 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc fiber.Handler
+
+// GetCoursesCourseId operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesCourseId(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "courseId" -------------
+	var courseId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "courseId", c.Params("courseId"), &courseId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter courseId: %w", err).Error())
+	}
+
+	return siw.Handler.GetCoursesCourseId(c, courseId)
+}
 
 // GetCoursesCourseIdDocuments operation middleware
 func (siw *ServerInterfaceWrapper) GetCoursesCourseIdDocuments(c *fiber.Ctx) error {
@@ -203,6 +250,22 @@ func (siw *ServerInterfaceWrapper) GetUniversitiesUniversityId(c *fiber.Ctx) err
 	return siw.Handler.GetUniversitiesUniversityId(c, universityId)
 }
 
+// PostUniversitiesUniversityIdCourses operation middleware
+func (siw *ServerInterfaceWrapper) PostUniversitiesUniversityIdCourses(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "universityId" -------------
+	var universityId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "universityId", c.Params("universityId"), &universityId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter universityId: %w", err).Error())
+	}
+
+	return siw.Handler.PostUniversitiesUniversityIdCourses(c, universityId)
+}
+
 // FiberServerOptions provides options for the Fiber server.
 type FiberServerOptions struct {
 	BaseURL     string
@@ -224,6 +287,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(m)
 	}
 
+	router.Get(options.BaseURL+"/courses/:courseId", wrapper.GetCoursesCourseId)
+
 	router.Get(options.BaseURL+"/courses/:courseId/documents", wrapper.GetCoursesCourseIdDocuments)
 
 	router.Post(options.BaseURL+"/courses/:courseId/documents", wrapper.PostCoursesCourseIdDocuments)
@@ -234,25 +299,29 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/universities/:universityId", wrapper.GetUniversitiesUniversityId)
 
+	router.Post(options.BaseURL+"/universities/:universityId/courses", wrapper.PostUniversitiesUniversityIdCourses)
+
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"RxYAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
