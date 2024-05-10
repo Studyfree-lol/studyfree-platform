@@ -1,7 +1,7 @@
 -- name: CreateUniversity :one
 INSERT INTO universities (
-    name, name_short, country, city, language, created_at
-) VALUES ($1, $2, $3, $4, $5, $6)
+    name, name_short, country, city, language
+) VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
 -- name: FindUniversity :one
@@ -9,8 +9,8 @@ SELECT * FROM universities_populated WHERE id=$1;
 
 -- name: CreateCourse :one
 INSERT INTO courses (
-   university_id, name, name_short, created_at
-) VALUES ($1, $2, $3, $4)
+   university_id, name, name_short
+) VALUES ($1, $2, $3)
 RETURNING *;
 
 -- name: FindCourse :one

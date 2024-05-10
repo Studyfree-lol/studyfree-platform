@@ -40,6 +40,43 @@ export interface paths {
         };
       };
     };
+    /** Create new University */
+    post: {
+      requestBody?: {
+        content: {
+          "application/json": {
+            name: string;
+            nameShort: string;
+            country: string;
+            city: string;
+            language: string;
+          };
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["model.UniversityPreview"][];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+          };
+        };
+      };
+    };
   };
   "/universities/{universityId}": {
     /**
@@ -56,7 +93,81 @@ export interface paths {
         /** @description OK */
         200: {
           content: {
-            "application/json": components["schemas"]["model.UniversityPreview"];
+            "application/json": components["schemas"]["model.University"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+          };
+        };
+      };
+    };
+  };
+  "/universities/{universityId}/courses": {
+    /** Create new Course for University */
+    post: {
+      parameters: {
+        path: {
+          universityId: string;
+        };
+      };
+      requestBody?: {
+        content: {
+          "application/json": {
+            name: string;
+            nameShort: string;
+          };
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["model.CoursePreview"][];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+          };
+        };
+      };
+    };
+  };
+  "/courses/{courseId}": {
+    /** Get a specific course */
+    get: {
+      parameters: {
+        path: {
+          courseId: string;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["model.Course"][];
           };
         };
         /** @description Bad Request */
@@ -78,10 +189,7 @@ export interface paths {
     };
   };
   "/courses/{courseId}/documents": {
-    /**
-     * Get specific Document
-     * @description retrieve a meta information about a specific document
-     */
+    /** Get documents for a specific course */
     get: {
       parameters: {
         path: {
@@ -164,7 +272,11 @@ export interface components {
     "model.UniversityPreview": {
       /** Format: uuid */
       id: string;
-      title: string;
+      name: string;
+      nameShort: string;
+      country: string;
+      city: string;
+      language: string;
     };
     "model.University": components["schemas"]["model.UniversityPreview"] & {
       courses: components["schemas"]["model.CoursePreview"][];
@@ -172,10 +284,17 @@ export interface components {
     "model.CoursePreview": {
       /** Format: uuid */
       id: string;
-      title: string;
+      name: string;
+      nameShort: string;
     };
     "model.Course": components["schemas"]["model.CoursePreview"] & {
-      documents: components["schemas"]["model.Document"][];
+      university: components["schemas"]["model.CourseUniversityPreview"];
+    };
+    "model.CourseUniversityPreview": {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      nameShort: string;
     };
     "model.Document": {
       title: string;

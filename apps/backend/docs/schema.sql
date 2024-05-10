@@ -5,8 +5,8 @@ CREATE TABLE universities (
    country TEXT NOT NULL CHECK (country ~ '^[A-Z]{2}$'),
    city TEXT NOT NULL,
    language TEXT NOT NULL CHECK (language ~ '^[a-z]{2}-[A-Z]{2}$'),
-   updated_at timestamptz NOT NULL,
-   created_at timestamptz NOT NULL
+   updated_at timestamptz NOT NULL DEFAULT NOW(),
+   created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE courses (
@@ -14,8 +14,8 @@ CREATE TABLE courses (
     university_id uuid REFERENCES universities(id),
     name TEXT NOT NULL,
     name_short TEXT NOT NULL,
-    updated_at timestamptz NOT NULL,
-    created_at timestamptz NOT NULL
+    updated_at timestamptz NOT NULL DEFAULT NOW(),
+    created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
 CREATE VIEW universities_populated (
@@ -48,8 +48,8 @@ CREATE TABLE documents (
     file_url TEXT NOT NULL,
     tag TEXT NOT NULL CHECK (tag IN ('exam', 'notes', 'slides', 'exercise')),
     course_id uuid REFERENCES courses(id),
-    updated_at timestamptz NOT NULL,
-    created_at timestamptz NOT NULL
+    updated_at timestamptz NOT NULL DEFAULT NOW(),
+    created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
 CREATE VIEW courses_populated (
@@ -59,13 +59,11 @@ CREATE VIEW courses_populated (
     name_short,
     created_at,
     updated_at,
-    university_ids,
-    university_names,
-    university_names_short
+    university_name,
+    university_name_short
 ) AS (
     SELECT
         courses.*,
-        universities.id AS university_id,
         universities.name AS university_name,
         universities.name_short AS university_name_short
     FROM courses

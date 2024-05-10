@@ -1,5 +1,9 @@
 .EXPORT_ALL_VARIABLES:
+PORT=8000
 POSTGRES_URL=postgres://postgres:mysecretpassword@localhost:5432/studyfree?sslmode=disable
+
+run:
+	go run ./cmd/main.go
 
 install:
 	go mod tidy

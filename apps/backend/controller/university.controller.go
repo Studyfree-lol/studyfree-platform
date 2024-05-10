@@ -29,6 +29,7 @@ func (ctr *Controller) PostUniversities(c *fiber.Ctx) error {
 		Language:  payload.Language,
 	})
 	if err != nil {
+		print(err.Error())
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 

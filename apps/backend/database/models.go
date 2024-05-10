@@ -24,7 +24,6 @@ type CoursesPopulated struct {
 	NameShort           string
 	UpdatedAt           pgtype.Timestamptz
 	CreatedAt           pgtype.Timestamptz
-	UniversityID        pgtype.UUID
 	UniversityName      string
 	UniversityNameShort string
 }

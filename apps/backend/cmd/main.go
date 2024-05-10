@@ -15,9 +15,9 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
-	dbUrl := os.Getenv("DB")
+	postgresUrl := os.Getenv("POSTGRES_URL")
 
-	conn, err := pgxpool.New(context.Background(), dbUrl)
+	conn, err := pgxpool.New(context.Background(), postgresUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

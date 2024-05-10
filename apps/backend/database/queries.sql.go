@@ -13,8 +13,8 @@ import (
 
 const createCourse = `-- name: CreateCourse :one
 INSERT INTO courses (
-   university_id, name, name_short, created_at
-) VALUES ($1, $2, $3, $4)
+   university_id, name, name_short
+) VALUES ($1, $2, $3)
 RETURNING id, university_id, name, name_short, updated_at, created_at
 `
 
@@ -22,16 +22,10 @@ type CreateCourseParams struct {
 	UniversityID pgtype.UUID
 	Name         string
 	NameShort    string
-	CreatedAt    pgtype.Timestamptz
 }
 
 func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Course, error) {
-	row := q.db.QueryRow(ctx, createCourse,
-		arg.UniversityID,
-		arg.Name,
-		arg.NameShort,
-		arg.CreatedAt,
-	)
+	row := q.db.QueryRow(ctx, createCourse, arg.UniversityID, arg.Name, arg.NameShort)
 	var i Course
 	err := row.Scan(
 		&i.ID,
@@ -56,8 +50,8 @@ type CreateDocumentsParams struct {
 
 const createUniversity = `-- name: CreateUniversity :one
 INSERT INTO universities (
-    name, name_short, country, city, language, created_at
-) VALUES ($1, $2, $3, $4, $5, $6)
+    name, name_short, country, city, language
+) VALUES ($1, $2, $3, $4, $5)
 RETURNING id, name, name_short, country, city, language, updated_at, created_at
 `
 
@@ -67,7 +61,6 @@ type CreateUniversityParams struct {
 	Country   string
 	City      string
 	Language  string
-	CreatedAt pgtype.Timestamptz
 }
 
 func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityParams) (University, error) {
@@ -77,7 +70,6 @@ func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityPara
 		arg.Country,
 		arg.City,
 		arg.Language,
-		arg.CreatedAt,
 	)
 	var i University
 	err := row.Scan(
@@ -94,7 +86,7 @@ func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityPara
 }
 
 const findCourse = `-- name: FindCourse :one
-SELECT id, courses_populated.university_id, name, name_short, updated_at, created_at, courses_populated.university_id, university_name, university_name_short FROM courses_populated WHERE id=$1
+SELECT id, university_id, name, name_short, updated_at, created_at, university_name, university_name_short FROM courses_populated WHERE id=$1
 `
 
 func (q *Queries) FindCourse(ctx context.Context, id pgtype.UUID) (CoursesPopulated, error) {
@@ -107,7 +99,6 @@ func (q *Queries) FindCourse(ctx context.Context, id pgtype.UUID) (CoursesPopula
 		&i.NameShort,
 		&i.UpdatedAt,
 		&i.CreatedAt,
-		&i.UniversityID,
 		&i.UniversityName,
 		&i.UniversityNameShort,
 	)
