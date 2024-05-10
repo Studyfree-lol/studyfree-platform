@@ -46,7 +46,7 @@ CREATE TABLE documents (
     title TEXT NOT NULL,
     thumbnail_url TEXT NOT NULL,
     file_url TEXT NOT NULL,
-    tag TEXT NOT NULL CHECK (tags IN ('exam', 'notes', 'slides', 'exercise')),
+    tag TEXT NOT NULL CHECK (tag IN ('exam', 'notes', 'slides', 'exercise')),
     course_id uuid REFERENCES courses(id),
     updated_at timestamptz NOT NULL,
     created_at timestamptz NOT NULL

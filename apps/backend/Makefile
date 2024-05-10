@@ -1,5 +1,5 @@
 .EXPORT_ALL_VARIABLES:
-POSTGRES_URL=postgres://postgres:mysecretpassword@localhost:5432/stufyfree?sslmode=disable
+POSTGRES_URL=postgres://postgres:mysecretpassword@localhost:5432/studyfree?sslmode=disable
 
 install:
 	go mod tidy
