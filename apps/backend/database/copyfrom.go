@@ -81,37 +81,3 @@ func (r iteratorForCreateDocuments) Err() error {
 func (q *Queries) CreateDocuments(ctx context.Context, arg []CreateDocumentsParams) (int64, error) {
 	return q.db.CopyFrom(ctx, []string{"documents"}, []string{"id", "created_at", "title", "thumbnail_url", "file_url", "tag", "course_id"}, &iteratorForCreateDocuments{rows: arg})
 }
-
-// iteratorForCreateUniversities implements pgx.CopyFromSource.
-type iteratorForCreateUniversities struct {
-	rows                 []CreateUniversitiesParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForCreateUniversities) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForCreateUniversities) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].ID,
-		r.rows[0].CreatedAt,
-		r.rows[0].Name,
-	}, nil
-}
-
-func (r iteratorForCreateUniversities) Err() error {
-	return nil
-}
-
-func (q *Queries) CreateUniversities(ctx context.Context, arg []CreateUniversitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"universities"}, []string{"id", "created_at", "name"}, &iteratorForCreateUniversities{rows: arg})
-}

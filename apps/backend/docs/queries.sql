@@ -1,7 +1,11 @@
--- name: CreateUniversities :copyfrom
+-- name: CreateUniversity :one
 INSERT INTO universities (
-    id, created_at, name
-) VALUES ($1, $2, $3);
+    name, name_short, country, city, language
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: FindUniversity :one
+SELECT * FROM universities_populated WHERE id=$1;
 
 -- name: CreateCourses :copyfrom
 INSERT INTO courses (

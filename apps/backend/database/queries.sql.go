@@ -6,6 +6,8 @@
 package database
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -26,8 +28,61 @@ type CreateDocumentsParams struct {
 	CourseID     pgtype.UUID
 }
 
-type CreateUniversitiesParams struct {
-	ID        pgtype.UUID
-	CreatedAt pgtype.Timestamptz
+const createUniversity = `-- name: CreateUniversity :one
+INSERT INTO universities (
+    name, name_short, country, city, language
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING id, name, name_short, country, city, language, updated_at, created_at
+`
+
+type CreateUniversityParams struct {
 	Name      string
+	NameShort string
+	Country   string
+	City      string
+	Language  string
+}
+
+func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityParams) (University, error) {
+	row := q.db.QueryRow(ctx, createUniversity,
+		arg.Name,
+		arg.NameShort,
+		arg.Country,
+		arg.City,
+		arg.Language,
+	)
+	var i University
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.NameShort,
+		&i.Country,
+		&i.City,
+		&i.Language,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const findUniversity = `-- name: FindUniversity :one
+SELECT id, name, name_short, country, city, language, updated_at, created_at, course_ids, course_names FROM universities_populated WHERE id=$1
+`
+
+func (q *Queries) FindUniversity(ctx context.Context, id pgtype.UUID) (UniversitiesPopulated, error) {
+	row := q.db.QueryRow(ctx, findUniversity, id)
+	var i UniversitiesPopulated
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.NameShort,
+		&i.Country,
+		&i.City,
+		&i.Language,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+		&i.CourseIds,
+		&i.CourseNames,
+	)
+	return i, err
 }

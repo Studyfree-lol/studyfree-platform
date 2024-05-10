@@ -36,6 +36,50 @@ paths:
         "500":
           description: Internal Server Error
           content: { }
+    post:
+      tags:
+        - universities
+      summary: Create new University
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - nameShort
+                - country
+                - city
+                - language
+              properties:
+                name:
+                  type: string
+                nameShort:
+                  type: string
+                country:
+                  type: string
+                city:
+                  type: string
+                language:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.UniversityPreview"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
 
   /universities/{universityId}:
     get:
@@ -56,7 +100,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.UniversityPreview"
+                $ref: "#/components/schemas/model.University"
         "400":
           description: Bad Request
           content: { }
@@ -146,12 +190,24 @@ components:
       type: object
       required:
         - id
-        - title
+        - name
+        - nameShort
+        - country
+        - city
+        - language
       properties:
         id:
           type: string
           format: uuid
-        title:
+        name:
+          type: string
+        nameShort:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        language:
           type: string
     model.University:
       allOf:
@@ -168,12 +224,12 @@ components:
       type: object
       required:
         - id
-        - title
+        - name
       properties:
         id:
           type: string
           format: uuid
-        title:
+        name:
           type: string
     model.Course:
       allOf:

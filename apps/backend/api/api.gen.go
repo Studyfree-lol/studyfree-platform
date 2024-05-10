@@ -18,6 +18,12 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// ModelCoursePreview defines model for model.CoursePreview.
+type ModelCoursePreview struct {
+	Id   openapi_types.UUID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // ModelDocument defines model for model.Document.
 type ModelDocument struct {
 	FileUrl  string `json:"fileUrl"`
@@ -26,10 +32,25 @@ type ModelDocument struct {
 	Title    string `json:"title"`
 }
 
+// ModelUniversity defines model for model.University.
+type ModelUniversity struct {
+	City      string               `json:"city"`
+	Country   string               `json:"country"`
+	Courses   []ModelCoursePreview `json:"courses"`
+	Id        openapi_types.UUID   `json:"id"`
+	Language  string               `json:"language"`
+	Name      string               `json:"name"`
+	NameShort string               `json:"nameShort"`
+}
+
 // ModelUniversityPreview defines model for model.UniversityPreview.
 type ModelUniversityPreview struct {
-	Id    openapi_types.UUID `json:"id"`
-	Title string             `json:"title"`
+	City      string             `json:"city"`
+	Country   string             `json:"country"`
+	Id        openapi_types.UUID `json:"id"`
+	Language  string             `json:"language"`
+	Name      string             `json:"name"`
+	NameShort string             `json:"nameShort"`
 }
 
 // PostCoursesCourseIdDocumentsParams defines parameters for PostCoursesCourseIdDocuments.
@@ -42,6 +63,18 @@ type GetUniversitiesParams struct {
 	Search *string `form:"search,omitempty" json:"search,omitempty"`
 }
 
+// PostUniversitiesJSONBody defines parameters for PostUniversities.
+type PostUniversitiesJSONBody struct {
+	City      string `json:"city"`
+	Country   string `json:"country"`
+	Language  string `json:"language"`
+	Name      string `json:"name"`
+	NameShort string `json:"nameShort"`
+}
+
+// PostUniversitiesJSONRequestBody defines body for PostUniversities for application/json ContentType.
+type PostUniversitiesJSONRequestBody PostUniversitiesJSONBody
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Get specific Document
@@ -53,6 +86,9 @@ type ServerInterface interface {
 	// Get all Universities
 	// (GET /universities)
 	GetUniversities(c *fiber.Ctx, params GetUniversitiesParams) error
+	// Create new University
+	// (POST /universities)
+	PostUniversities(c *fiber.Ctx) error
 	// Get specific University
 	// (GET /universities/{universityId})
 	GetUniversitiesUniversityId(c *fiber.Ctx, universityId openapi_types.UUID) error
@@ -145,6 +181,12 @@ func (siw *ServerInterfaceWrapper) GetUniversities(c *fiber.Ctx) error {
 	return siw.Handler.GetUniversities(c, params)
 }
 
+// PostUniversities operation middleware
+func (siw *ServerInterfaceWrapper) PostUniversities(c *fiber.Ctx) error {
+
+	return siw.Handler.PostUniversities(c)
+}
+
 // GetUniversitiesUniversityId operation middleware
 func (siw *ServerInterfaceWrapper) GetUniversitiesUniversityId(c *fiber.Ctx) error {
 
@@ -188,6 +230,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/universities", wrapper.GetUniversities)
 
+	router.Post(options.BaseURL+"/universities", wrapper.PostUniversities)
+
 	router.Get(options.BaseURL+"/universities/:universityId", wrapper.GetUniversitiesUniversityId)
 
 }
@@ -195,18 +239,20 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
