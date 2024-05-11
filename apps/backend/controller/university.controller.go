@@ -3,9 +3,9 @@ package controller
 import (
 	"backend/api"
 	"backend/database"
+	"backend/utils"
 	"context"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 	"math"
@@ -92,7 +92,7 @@ func (ctr *Controller) GetUniversitiesUniversityId(c *fiber.Ctx, universityId op
 
 	courses := make([]api.ModelCoursePreview, 0)
 	for i, idInterface := range result.CourseIds.([]interface{}) {
-		cId, err := uuid.FromBytes(idInterface.([]byte)[:])
+		cId, err := utils.ParseUUID(idInterface)
 		if err != nil {
 			continue
 		}
