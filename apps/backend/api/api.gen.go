@@ -18,12 +18,21 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for PostCoursesCourseIdDocumentsParamsTag.
+const (
+	Exam     PostCoursesCourseIdDocumentsParamsTag = "exam"
+	Exercise PostCoursesCourseIdDocumentsParamsTag = "exercise"
+	Notes    PostCoursesCourseIdDocumentsParamsTag = "notes"
+	Slides   PostCoursesCourseIdDocumentsParamsTag = "slides"
+)
+
 // ModelDocument defines model for model.Document.
 type ModelDocument struct {
-	FileUrl  string `json:"fileUrl"`
-	Tag      string `json:"tag"`
-	ThumbUrl string `json:"thumbUrl"`
-	Title    string `json:"title"`
+	FileUrl  string             `json:"fileUrl"`
+	Id       openapi_types.UUID `json:"id"`
+	Tag      string             `json:"tag"`
+	ThumbUrl string             `json:"thumbUrl"`
+	Title    string             `json:"title"`
 }
 
 // ModelUniversityPreview defines model for model.UniversityPreview.
@@ -32,15 +41,27 @@ type ModelUniversityPreview struct {
 	Title string             `json:"title"`
 }
 
+// PostCoursesCourseIdDocumentsMultipartBody defines parameters for PostCoursesCourseIdDocuments.
+type PostCoursesCourseIdDocumentsMultipartBody struct {
+	File *openapi_types.File `json:"file,omitempty"`
+}
+
 // PostCoursesCourseIdDocumentsParams defines parameters for PostCoursesCourseIdDocuments.
 type PostCoursesCourseIdDocumentsParams struct {
-	Name string `form:"name" json:"name"`
+	Name string                                `form:"name" json:"name"`
+	Tag  PostCoursesCourseIdDocumentsParamsTag `form:"tag" json:"tag"`
 }
+
+// PostCoursesCourseIdDocumentsParamsTag defines parameters for PostCoursesCourseIdDocuments.
+type PostCoursesCourseIdDocumentsParamsTag string
 
 // GetUniversitiesParams defines parameters for GetUniversities.
 type GetUniversitiesParams struct {
 	Search *string `form:"search,omitempty" json:"search,omitempty"`
 }
+
+// PostCoursesCourseIdDocumentsMultipartRequestBody defines body for PostCoursesCourseIdDocuments for multipart/form-data ContentType.
+type PostCoursesCourseIdDocumentsMultipartRequestBody PostCoursesCourseIdDocumentsMultipartBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -116,6 +137,21 @@ func (siw *ServerInterfaceWrapper) PostCoursesCourseIdDocuments(c *fiber.Ctx) er
 	err = runtime.BindQueryParameter("form", true, true, "name", query, &params.Name)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter name: %w", err).Error())
+	}
+
+	// ------------- Required query parameter "tag" -------------
+
+	if paramValue := c.Query("tag"); paramValue != "" {
+
+	} else {
+		err = fmt.Errorf("Query argument tag is required, but not found")
+		c.Status(fiber.StatusBadRequest).JSON(err)
+		return err
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "tag", query, &params.Tag)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter tag: %w", err).Error())
 	}
 
 	return siw.Handler.PostCoursesCourseIdDocuments(c, courseId, params)
@@ -195,18 +231,19 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/+xWy27rNhD9FWLapWq5TbrRrknawijQGg28CrygxbHNQCKV4dCJYOjfC1LyQ5aduF30",
+	"3gB3ZUacx5k5Z4bZQm7Lyho07CDbgsvXWMp4LK3CYvRgc1+i4fClIlshscZ4v9QFzqgIR64rhAwckzYr",
+	"aBLQKlpYKiVDBt5rBcnQjOXqrDuvfbm4FJs1F3jmpkmA8MVrQgXZE7QZo22yx3oUus0+36Oyi2fMOSRo",
+	"C58ZvUFymusp4Ubj67AD11b5rwEPUQVjbZY2hFHoctIVa2sgg0f2ql4SovhlOtlHGH6PxUSPH0fj0TgA",
+	"sxUaWWnI4GY0Ht1AApXkdSwtza0nhy7dtoeJalLVSSEarJCHWAiZNG5QSFEiSxEQh+Zoa4RcWM9CCldh",
+	"rpc6F7twEIFQtJooyOB35Ps2+32X+2GfOUAkWSIjOcietqBD3gAbEjCyDJXvEMNxf5k8Jp28r2CtmQdn",
+	"V1njWq5/Go/DT24Nd9Mgq6rQeYSdPrtQ//YovmYso+P3hEvI4Lv0MGhpN2XpyYg1exiSSNYt6/0O//VH",
+	"sLptwfSv7qQSf+OLR8etze3Q5k/L4jfrjQoWP5+LMjGMZGQhHpE2SOJXIktRq86XpaS6JehA48OBRpar",
+	"QAochDJvEqisOyOVqXdrIYXB170QBFvBaxSd9Aa6mFr3FQgj6UK/eKT6EDv+vBf3yjhhKb0XBo0vQ4/x",
+	"TZbBy3LslCu0igd8Q8q1O94hfU1HgdxZVZ/IufQF60oSp6EDPyjJsq/o4fbvtWuhjYyFDLfcYJc134br",
+	"4nAdDcYHo9UkkPrdK9XR8sFaLgrR8zizemf9+3NTdSJZh5LyMGaXxf4/btPhu/2Z1mpg6ISBHfU94obs",
+	"p9v9X/VENR+LIb7QYczF0pKQB2HUQpu88Eqb1cVdfCKU2VHqq1ax7zt8uXf6PwnqM7zLB9jvaCi4x3gt",
+	"UT78yw1r5spBM2/+CQAA//8HwL6THQwAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

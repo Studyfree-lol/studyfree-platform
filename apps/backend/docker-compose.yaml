@@ -1,0 +1,64 @@
+version: "3.4"
+
+services:
+  backend:
+    platform: "linux/amd64"
+    restart: always
+    build:
+      dockerfile: Dockerfile
+    depends_on:
+      - minio
+      - postgres
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_URL: postgres://postgres:mysecretpassword@postgres:5432/studyfree?sslmode=disable
+      MEILISEARCH_URL: http://meilisearch:7700
+      MEILISEARCH_API_TOKEN: VERY_SECRET_TOKEN
+      MINIO_URL: minio:9000
+      MINIO_ACCESS_KEY_ID: VERY_SECRET_TOKEN
+      MINIO_ACCESS_KEY_SECRET: VERY_SECRET_TOKEN
+      DOCUMENTS_BUCKET_NAME: documents
+      CORS: "*"
+      PORT: 8000
+
+  postgres:
+    image: postgres:15-alpine3.18
+    volumes:
+      - "$HOME/studyfree/postgres/data:/var/lib/postgresql/data"
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=studyfree
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: VERY_SECRET_TOKEN
+      MINIO_SECRET_KEY: VERY_SECRET_TOKEN
+    volumes:
+      - "$HOME/studyfree/minio/data:/data"
+    command: server /data
+
+  meilisearch:
+    hostname: meilisearch
+    image: getmeili/meilisearch:v0.25.2
+    environment:
+      - MEILI_MASTER_KEY=VERY_SECRET_TOKEN
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_ENV=production
+      - MEILI_DB_PATH=data.ms
+    ports:
+      - 7700:7700
+    volumes:
+      - ./data.ms:/data.ms
+      - "$HOME/studyfree/meilisearch/data.ms:/data.ms"
+    restart: unless-stopped

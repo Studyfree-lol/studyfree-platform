@@ -120,6 +120,7 @@ export interface paths {
       parameters: {
         query: {
           name: string;
+          tag: "exam" | "notes" | "slides" | "exercise";
         };
         path: {
           courseId: string;
@@ -127,7 +128,10 @@ export interface paths {
       };
       requestBody?: {
         content: {
-          "application/pdf": string;
+          "multipart/form-data": {
+            /** Format: binary */
+            file?: string;
+          };
         };
       };
       responses: {
@@ -178,6 +182,8 @@ export interface components {
       documents: components["schemas"]["model.Document"][];
     };
     "model.Document": {
+      /** Format: uuid */
+      id: string;
       title: string;
       fileUrl: string;
       thumbUrl: string;

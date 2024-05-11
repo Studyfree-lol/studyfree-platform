@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "build-oapi": "openapi-typescript --output ./lib/api/api.d.ts '../apps/backend/docs/openapi.yaml'",
+    "build-oapi": "openapi-typescript --output ./lib/api/api.d.ts '../backend/docs/openapi.yaml'",
     "lint": "next lint"
   },
   "dependencies": {

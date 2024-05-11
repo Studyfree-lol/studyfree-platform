@@ -10,21 +10,43 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"log"
 	"os"
 )
 
 func main() {
 	port := os.Getenv("PORT")
-	dbUrl := os.Getenv("DB")
+	postgresUrl := os.Getenv("POSTGRES_URL")
+	minioUrl := os.Getenv("MINIO_URL")
+	minioAccessKeyId := os.Getenv("MINIO_ACCESS_KEY_ID")
+	minioAccessKeySecret := os.Getenv("MINIO_ACCESS_KEY_SECRET")
+	documentsBucketName := os.Getenv("DOCUMENTS_BUCKET_NAME")
 
-	conn, err := pgxpool.New(context.Background(), dbUrl)
+	conn, err := pgxpool.New(context.Background(), postgresUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
 	defer conn.Close()
-
 	queries := database.New(conn)
+
+	minioClient, err := minio.New(minioUrl, &minio.Options{
+		Creds:  credentials.NewStaticV4(minioAccessKeyId, minioAccessKeySecret, ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if exists, err := minioClient.BucketExists(context.Background(), documentsBucketName); err != nil {
+		log.Fatalln(err)
+	} else if !exists {
+		if err := minioClient.MakeBucket(context.Background(), documentsBucketName, minio.MakeBucketOptions{}); err != nil {
+			log.Fatalln(err)
+		}
+	}
 
 	f := fiber.New(fiber.Config{
 		CaseSensitive: true,
@@ -32,7 +54,7 @@ func main() {
 		AppName:       "Studyfree API",
 	})
 
-	c := controller.New(conn, queries)
+	c := controller.New(conn, queries, minioClient, documentsBucketName)
 
 	f.Use(cors.New())
 
