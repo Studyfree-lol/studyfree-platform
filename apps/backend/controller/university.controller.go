@@ -4,15 +4,53 @@ import (
 	"backend/api"
 	"backend/database"
 	"context"
-	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	openapi_types "github.com/oapi-codegen/runtime/types"
+	"math"
 )
 
+const universityPageSize = 20
+
 func (ctr *Controller) GetUniversities(c *fiber.Ctx, params api.GetUniversitiesParams) error {
-	return errors.New("not implemented")
+	page := 0
+	if params.Page != nil && *params.Page > 0 {
+		page = int(*params.Page) - 1
+	}
+
+	result, err := ctr.queries.FindUniversities(context.Background(), database.FindUniversitiesParams{
+		Limit:  universityPageSize,
+		Offset: int32(universityPageSize * page),
+	})
+	if err != nil {
+		print(err.Error())
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	totalUniversities, err := ctr.queries.GetUniversityCount(context.Background())
+	if err != nil {
+		print(err.Error())
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	totalPages := math.Ceil(float64(totalUniversities) / float64(universityPageSize))
+	items := make([]api.ModelUniversityPreview, 0)
+	for _, university := range result {
+		items = append(items, api.ModelUniversityPreview{
+			Id:        university.ID.Bytes,
+			Country:   university.Country,
+			City:      university.City,
+			Name:      university.Name,
+			NameShort: university.NameShort,
+			Language:  university.Language,
+		})
+	}
+
+	return c.JSON(map[string]interface{}{
+		"totalPages": totalPages,
+		"items":      items,
+	})
 }
 
 func (ctr *Controller) PostUniversities(c *fiber.Ctx) error {

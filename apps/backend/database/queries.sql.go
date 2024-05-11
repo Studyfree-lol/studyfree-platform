@@ -105,6 +105,44 @@ func (q *Queries) FindCourse(ctx context.Context, id pgtype.UUID) (CoursesPopula
 	return i, err
 }
 
+const findUniversities = `-- name: FindUniversities :many
+SELECT id, name, name_short, country, city, language, updated_at, created_at FROM universities LIMIT $1 OFFSET $2
+`
+
+type FindUniversitiesParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) FindUniversities(ctx context.Context, arg FindUniversitiesParams) ([]University, error) {
+	rows, err := q.db.Query(ctx, findUniversities, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []University
+	for rows.Next() {
+		var i University
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.NameShort,
+			&i.Country,
+			&i.City,
+			&i.Language,
+			&i.UpdatedAt,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findUniversity = `-- name: FindUniversity :one
 SELECT id, name, name_short, country, city, language, updated_at, created_at, course_ids, course_names, course_names_short FROM universities_populated WHERE id=$1
 `
@@ -126,4 +164,15 @@ func (q *Queries) FindUniversity(ctx context.Context, id pgtype.UUID) (Universit
 		&i.CourseNamesShort,
 	)
 	return i, err
+}
+
+const getUniversityCount = `-- name: GetUniversityCount :one
+SELECT count(*) FROM universities
+`
+
+func (q *Queries) GetUniversityCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, getUniversityCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }

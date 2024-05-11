@@ -6,21 +6,21 @@
 
 export interface paths {
   "/universities": {
-    /**
-     * Get all Universities
-     * @description retrieve all universities
-     */
+    /** Get Universities */
     get: {
       parameters: {
         query?: {
-          search?: string;
+          page?: number;
         };
       };
       responses: {
         /** @description OK */
         200: {
           content: {
-            "application/json": components["schemas"]["model.UniversityPreview"][];
+            "application/json": {
+              totalPages: number;
+              items: components["schemas"]["model.UniversityPreview"][];
+            };
           };
         };
         /** @description Bad Request */

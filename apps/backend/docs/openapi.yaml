@@ -10,23 +10,31 @@ paths:
     get:
       tags:
         - universities
-      summary: Get all Universities
-      description: retrieve all universities
+      summary: Get Universities
       parameters:
-        - name: search
+        - name: page
           required: false
           in: query
           schema:
-            type: string
+            type: number
+            default: 1
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/model.UniversityPreview"
+                type: object
+                required:
+                  - totalPages
+                  - items
+                properties:
+                  totalPages:
+                    type: integer
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/model.UniversityPreview"
         "400":
           description: Bad Request
           content: { }

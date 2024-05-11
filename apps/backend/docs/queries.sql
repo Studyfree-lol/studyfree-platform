@@ -4,6 +4,12 @@ INSERT INTO universities (
 ) VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
+-- name: FindUniversities :many
+SELECT * FROM universities LIMIT $1 OFFSET $2;
+
+-- name: GetUniversityCount :one
+SELECT count(*) FROM universities;
+
 -- name: FindUniversity :one
 SELECT * FROM universities_populated WHERE id=$1;
 
