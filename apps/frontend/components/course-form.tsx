@@ -33,11 +33,17 @@ export default function CourseForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = await api.POST("/universities", {
-      body: values,
+    const { universityId, ...payload } = values;
+    const result = await api.POST("/universities/{universityId}/courses", {
+      params: {
+        path: {
+          universityId,
+        },
+      },
+      body: payload,
     });
     console.log(result);
-    alert("University created");
+    alert("Course created");
   }
 
   return (
