@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/api"
 	"backend/database"
+	"backend/utils"
 	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -15,7 +16,14 @@ func (ctr *Controller) PostUniversitiesUniversityIdCourses(c *fiber.Ctx, univers
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	uniResult, err := ctr.queries.FindUniversity(context.Background(), pgtype.UUID{
+	tx, err := ctr.db.Begin(context.Background())
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	defer tx.Rollback(context.Background())
+	qtx := ctr.queries.WithTx(tx)
+
+	uniResult, err := qtx.FindUniversity(context.Background(), pgtype.UUID{
 		Bytes: universityId,
 		Valid: true,
 	})
@@ -23,12 +31,26 @@ func (ctr *Controller) PostUniversitiesUniversityIdCourses(c *fiber.Ctx, univers
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	result, err := ctr.queries.CreateCourse(context.Background(), database.CreateCourseParams{
+	result, err := qtx.CreateCourse(context.Background(), database.CreateCourseParams{
 		Name:         payload.Name,
 		NameShort:    payload.NameShort,
 		UniversityID: uniResult.ID,
 	})
 	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	uniId := utils.UUIDToString(uniResult.ID)
+	courseId := utils.UUIDToString(result.ID)
+	if _, err := ctr.coursesSearchIndex.AddDocuments([]map[string]interface{}{
+		{"id": courseId, "title": payload.Name, "nameShort": payload.NameShort, "universityId": uniId, "universityName": uniResult.Name, "universityNameShort": uniResult.NameShort, "universityCountry": uniResult.Country},
+	}); err != nil {
+		print(err.Error())
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	if err := tx.Commit(context.Background()); err != nil {
+		defer ctr.coursesSearchIndex.Delete(uniId)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 

@@ -59,7 +59,14 @@ func (ctr *Controller) PostUniversities(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	result, err := ctr.queries.CreateUniversity(context.Background(), database.CreateUniversityParams{
+	tx, err := ctr.db.Begin(context.Background())
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	defer tx.Rollback(context.Background())
+	qtx := ctr.queries.WithTx(tx)
+
+	result, err := qtx.CreateUniversity(context.Background(), database.CreateUniversityParams{
 		Name:      payload.Name,
 		NameShort: payload.NameShort,
 		City:      payload.City,
@@ -68,6 +75,19 @@ func (ctr *Controller) PostUniversities(c *fiber.Ctx) error {
 	})
 	if err != nil {
 		print(err.Error())
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	uniId := utils.UUIDToString(result.ID)
+	if _, err := ctr.universitiesSearchIndex.AddDocuments([]map[string]interface{}{
+		{"id": uniId, "title": payload.Name, "nameShort": payload.NameShort, "country": payload.Country},
+	}); err != nil {
+		print(err.Error())
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	if err := tx.Commit(context.Background()); err != nil {
+		defer ctr.universitiesSearchIndex.Delete(uniId)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 

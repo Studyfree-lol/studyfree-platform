@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -30,6 +31,10 @@ func ParseUUID(bytes interface{}) (uuid.UUID, error) {
 		return uuid.Parse(bytes.(string))
 	}
 	return uuid.Parse("")
+}
+
+func UUIDToString(id pgtype.UUID) string {
+	return fmt.Sprintf("%x-%x-%x-%x-%x", id.Bytes[0:4], id.Bytes[4:6], id.Bytes[6:8], id.Bytes[8:10], id.Bytes[10:16])
 }
 
 func ParseStringSlice(slice interface{}) ([]string, error) {

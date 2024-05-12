@@ -10,12 +10,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/meilisearch/meilisearch-go"
 	"os"
 )
 
 func main() {
 	port := os.Getenv("PORT")
 	postgresUrl := os.Getenv("POSTGRES_URL")
+	meilisearchUrl := os.Getenv("MEILISEARCH_URL")
+	meilisearchApiKey := os.Getenv("MEILISEARCH_API_KEY")
 
 	conn, err := pgxpool.New(context.Background(), postgresUrl)
 	if err != nil {
@@ -26,13 +29,18 @@ func main() {
 
 	queries := database.New(conn)
 
+	meilisearchClient := meilisearch.NewClient(meilisearch.ClientConfig{
+		Host:   meilisearchUrl,
+		APIKey: meilisearchApiKey,
+	})
+
 	f := fiber.New(fiber.Config{
 		CaseSensitive: true,
 		StrictRouting: true,
 		AppName:       "Studyfree API",
 	})
 
-	c := controller.New(conn, queries)
+	c := controller.New(conn, queries, meilisearchClient)
 
 	f.Use(cors.New())
 
