@@ -1,7 +1,7 @@
 "use client";
 
 import { TypographyH1 } from "@/components/typographie";
-import UniversityTable from "@/components/university-table/university-table";
+import UniversityTable from "@/components/university-table";
 import { api } from "@/lib/api";
 import { components } from "@/lib/api/api";
 import { useEffect, useState } from "react";

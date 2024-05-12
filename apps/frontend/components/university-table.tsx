@@ -9,9 +9,9 @@ import {
 import ReactCountryFlag from "react-country-flag";
 import { ChevronRightIcon, LucideLoader, UniversityIcon } from "lucide-react";
 import { components } from "@/lib/api/api";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import Loader from "../loader";
+import Loader from "./loader";
 
 export interface UniversityTableProps {
   universities: components["schemas"]["model.UniversityPreview"][];
