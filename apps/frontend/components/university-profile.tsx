@@ -1,6 +1,7 @@
 import { components } from "@/lib/api/api";
-import { TypographyH1 } from "./typographie";
+import { TypographyH1, TypographyH2 } from "./typographie";
 import Loader from "./loader";
+import CourseTable from "./course-table";
 
 export interface UniversityProfileProps {
   university?: components["schemas"]["model.University"];
@@ -26,6 +27,12 @@ export default function UniversityProfile({
   return (
     <div>
       <TypographyH1>{university.name}</TypographyH1>
+      <div className="mt-7">
+        <div className="mb-4">
+          <TypographyH2>Courses</TypographyH2>
+        </div>
+        <CourseTable university={university} />
+      </div>
     </div>
   );
 }

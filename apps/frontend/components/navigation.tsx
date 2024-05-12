@@ -1,14 +1,12 @@
 "use client";
 import {
-  BookType,
-  CirclePlus,
+  BookIcon,
   CirclePlusIcon,
   MoreVerticalIcon,
   PinIcon,
   PinOffIcon,
   PlusIcon,
   ShieldAlertIcon,
-  ShieldIcon,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -54,7 +52,7 @@ export default function Navigation() {
           <NavigationItem
             key={course.courseId}
             title={course.title}
-            icon={<BookType className="h-4 w-4 flex-shrink-0" />}
+            icon={<BookIcon className="h-4 w-4 flex-shrink-0" />}
             href={`/uni/${course.universityId}/${course.courseId}`}
             trailing={
               <DropdownMenu>

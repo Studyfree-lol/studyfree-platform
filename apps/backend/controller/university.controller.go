@@ -91,6 +91,15 @@ func (ctr *Controller) GetUniversitiesUniversityId(c *fiber.Ctx, universityId op
 	}
 
 	courses := make([]api.ModelCoursePreview, 0)
+	courseNames, err := utils.ParseStringSlice(result.CourseNames)
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	courseNamesShort, err := utils.ParseStringSlice(result.CourseNamesShort)
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
 	for i, idInterface := range result.CourseIds.([]interface{}) {
 		cId, err := utils.ParseUUID(idInterface)
 		if err != nil {
@@ -98,8 +107,8 @@ func (ctr *Controller) GetUniversitiesUniversityId(c *fiber.Ctx, universityId op
 		}
 		courses = append(courses, api.ModelCoursePreview{
 			Id:        cId,
-			Name:      result.CourseNames.([]string)[i], // TODO: Find something nicer
-			NameShort: result.CourseNamesShort.([]string)[i],
+			Name:      courseNames[i], // TODO: Find something nicer
+			NameShort: courseNamesShort[i],
 		})
 	}
 

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -29,4 +30,22 @@ func ParseUUID(bytes interface{}) (uuid.UUID, error) {
 		return uuid.Parse(bytes.(string))
 	}
 	return uuid.Parse("")
+}
+
+func ParseStringSlice(slice interface{}) ([]string, error) {
+	switch slice.(type) {
+	case []interface{}:
+		strings := make([]string, 0)
+		for _, item := range slice.([]interface{}) {
+			switch item.(type) {
+			case string:
+				strings = append(strings, item.(string))
+				break
+			default:
+				return []string{}, errors.New("slice includes non string values")
+			}
+		}
+		return strings, nil
+	}
+	return []string{}, errors.New("cannot parse interface that is not a slice([]interface{})")
 }
