@@ -20,8 +20,4 @@ WORKDIR /root/
 
 COPY --from=builder /app/main .
 
-ENV PORT=8000
-
-EXPOSE 8000
-
 CMD ["./main"]
