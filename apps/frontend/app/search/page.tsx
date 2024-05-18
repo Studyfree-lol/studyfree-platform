@@ -1,11 +1,11 @@
 "use client";
 import { SearchInput } from "@/components/search-input";
-import { TypographyH1 } from "@/components/typographie";
+import Typography from "@/components/typography";
 
 export default function Search() {
   return (
     <div>
-      <TypographyH1>Search Courses</TypographyH1>
+      <Typography.H1>Search Courses</Typography.H1>
       <div className="py-4">
         <SearchInput />
       </div>

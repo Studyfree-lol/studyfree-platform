@@ -3,7 +3,7 @@ import AutoBreadcrumb from '@/components/auto-breadcrumb';
 import DocumentCard from '@/components/document-card';
 import { FilterDropdown } from '@/components/filter-dropdown';
 import PinButton from '@/components/pin-button';
-import { TypographyH1, TypographyH2 } from '@/components/typographie';
+import Typography from '@/components/typography';
 import { Button } from '@/components/ui/button';
 import { FilterIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -23,7 +23,7 @@ export default function Course() {
         ]}
       />
 
-      <TypographyH1>
+      <Typography.H1>
         Einführung in die Informatik
         <PinButton
           course={{
@@ -32,11 +32,11 @@ export default function Course() {
             title: 'Einführung in die Informatik',
           }}
         />
-      </TypographyH1>
+      </Typography.H1>
 
       <section className="mt-8">
         <div className="flex justify-between items-center border-b-2 pb-2">
-          <TypographyH2>Documents</TypographyH2>
+          <Typography.H2>Documents</Typography.H2>
           <FilterDropdown>
             <Button variant="outline">
               <FilterIcon className="h-5 w-5 mr-2" />

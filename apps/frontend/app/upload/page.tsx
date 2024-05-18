@@ -1,11 +1,11 @@
-import { TypographyH1 } from "@/components/typographie";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { HeartIcon, UploadCloudIcon } from "lucide-react";
+import Typography from '@/components/typography';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { HeartIcon, UploadCloudIcon } from 'lucide-react';
 
 export default function Search() {
   return (
     <div>
-      <TypographyH1>Upload Documents</TypographyH1>
+      <Typography.H1>Upload Documents</Typography.H1>
 
       <Alert className="my-7">
         <HeartIcon color="purple" className="h-4 w-4" />

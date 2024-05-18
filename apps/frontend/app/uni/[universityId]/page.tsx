@@ -1,6 +1,5 @@
 "use client";
 import AutoBreadcrumb from "@/components/auto-breadcrumb";
-import { TypographyH1 } from "@/components/typographie";
 import UniversityProfile from "@/components/university-profile";
 import { api } from "@/lib/api";
 import { components } from "@/lib/api/api";
