@@ -1,5 +1,5 @@
 import AutoBreadcrumb from '@/components/auto-breadcrumb';
-import { TypographyH1 } from '@/components/typographie';
+import Typography from '@/components/typography';
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
           { label: 'Technische Universität München' },
         ]}
       />
-      <TypographyH1>Technische Universität München</TypographyH1>
+      <Typography.H1>Technische Universität München</Typography.H1>
     </div>
   );
 }
