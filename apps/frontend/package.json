@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "build-oapi": "openapi-typescript --output ./lib/api/api.d.ts '../apps/backend/docs/openapi.yaml'",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,6 +18,8 @@
     "lucide-react": "^0.376.0",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
+    "openapi-fetch": "^0.9.5",
+    "openapi-typescript": "^6.7.5",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.3.0",

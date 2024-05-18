@@ -1,43 +1,56 @@
-version: "3.4"
-
 services:
   backend:
-    platform: "linux/amd64"
+    platform: 'linux/amd64'
     restart: always
     build:
       context: ./apps/backend
       dockerfile: Dockerfile
-    depends_on:
-      - neo4j
     ports:
-      - "8000:8000"
+      - 3001:8000
     environment:
-      MEILISEARCH_URL: http://meilisearch:7700
-      MEILISEARCH_API_TOKEN: VERY_SECRET_TOKEN
-      CORS: "*"
-      PORT: 8000
-    env_file:
-      - .env
-      - .env.local
+      - MEILISEARCH_URL=http://meilisearch:7700
+      - MEILISEARCH_API_TOKEN=${MEILI_MASTER_KEY}
+      - CORS
+      - PORT
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      - meilisearch
 
   frontend:
     build:
       context: ./apps/frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - 3002:3000
+    depends_on:
+      - backend
 
   meilisearch:
     hostname: meilisearch
     image: getmeili/meilisearch:v0.25.2
     environment:
-      - MEILI_MASTER_KEY=VERY_SECRET_TOKEN
+      - MEILI_MASTER_KEY
       - MEILI_NO_ANALYTICS=true
-      - MEILI_ENV=production
-      - MEILI_DB_PATH=data.ms
+      - MEILI_ENV
+      - MEILI_DB_PATH
     ports:
       - 7700:7700
     volumes:
-      - ./data.ms:/data.ms
-      - "$HOME/startgpt/meilisearch/data.ms:/data.ms"
+      - data-ms:/${MEILI_DB_PATH}
     restart: unless-stopped
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports:
+      - 5432:5432
+    volumes:
+      - data-pg:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  data-ms:
+  data-pg:
