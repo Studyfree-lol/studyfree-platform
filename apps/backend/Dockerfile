@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+
+# Build the application from source
 FROM golang:1.22-alpine3.18 as builder
 
 WORKDIR /app
@@ -10,14 +13,17 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main ./cmd/
+RUN CGO_ENABLED=0 GOOS=linux go build -o /backend cmd/main.go
 
+# Deploy the application binary into a lean image
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
 
-# Runtime Stage
-FROM alpine:3.18
+WORKDIR /
 
-WORKDIR /root/
+COPY --from=build-stage /backend /backend
 
-COPY --from=builder /app/main .
+EXPOSE 8080
 
-CMD ["./main"]
+USER nonroot:nonroot
+
+ENTRYPOINT ["/backend"]
