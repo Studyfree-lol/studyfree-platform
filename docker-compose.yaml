@@ -22,6 +22,15 @@ services:
       CORS: "*"
       PORT: 8000
 
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3002:3000
+    depends_on:
+      - backend
+
   postgres:
     image: postgres:15-alpine3.18
     volumes:
