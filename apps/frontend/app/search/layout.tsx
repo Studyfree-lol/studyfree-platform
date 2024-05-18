@@ -2,12 +2,19 @@
 import { InstantSearch } from "react-instantsearch";
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 
-const { searchClient } = instantMeiliSearch("http://localhost:7700", "");
+const { searchClient } = instantMeiliSearch(
+  process.env.NEXT_PUBLIC_MEILISEARCH_URL ?? "",
+  process.env.NEXT_PUBLIC_MEILISEARCH_TOKEN,
+);
 
 export default function SearchLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <InstantSearch searchClient={searchClient}>{children}</InstantSearch>;
+  return (
+    <InstantSearch indexName="courses" searchClient={searchClient}>
+      {children}
+    </InstantSearch>
+  );
 }
