@@ -1,6 +1,6 @@
 "use client";
 
-import { TypographyH1 } from "@/components/typographie";
+import Typography from "@/components/typography";
 import UniversityTable from "@/components/university-table";
 import { api } from "@/lib/api";
 import { components } from "@/lib/api/api";
@@ -41,7 +41,7 @@ export default function Uni() {
 
   return (
     <div>
-      <TypographyH1>Universities</TypographyH1>
+      <Typography.H1>Universities</Typography.H1>
       <div className="mt-7">
         <UniversityTable
           universities={universities}
