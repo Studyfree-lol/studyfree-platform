@@ -9,6 +9,7 @@ services:
     depends_on:
       - minio
       - postgres
+      - meilisearch
     ports:
       - "8000:8000"
     environment:
