@@ -16,6 +16,7 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
+	corsOrigins := os.Getenv("CORS")
 	postgresUrl := os.Getenv("POSTGRES_URL")
 	meilisearchUrl := os.Getenv("MEILISEARCH_URL")
 	meilisearchApiKey := os.Getenv("MEILISEARCH_API_KEY")
@@ -42,7 +43,9 @@ func main() {
 
 	c := controller.New(conn, queries, meilisearchClient)
 
-	f.Use(cors.New())
+	f.Use(cors.New(cors.Config{
+		AllowOrigins: corsOrigins,
+	}))
 
 	f.Use(healthcheck.New(healthcheck.Config{
 		LivenessProbe: func(c *fiber.Ctx) bool {
