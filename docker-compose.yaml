@@ -20,7 +20,7 @@ services:
       MINIO_ACCESS_KEY_ID: VERY_SECRET_TOKEN
       MINIO_ACCESS_KEY_SECRET: VERY_SECRET_TOKEN
       DOCUMENTS_BUCKET_NAME: documents
-      CORS: "*"
+      CORS: "http://localhost:3000"
       PORT: 8000
 
   frontend:
