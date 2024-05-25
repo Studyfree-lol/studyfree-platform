@@ -7,6 +7,8 @@ import {
   PinOffIcon,
   PlusIcon,
   ShieldAlertIcon,
+  TelescopeIcon,
+  UniversityIcon,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -73,6 +75,16 @@ export default function Navigation() {
             }
           />
         ))}
+      </NavigationSection>
+      <NavigationSection
+        title="Explore"
+        icon={<TelescopeIcon className="h-3 w-3 flex-shrink-0" />}
+      >
+        <NavigationItem
+          title="All Universities"
+          icon={<UniversityIcon className="h-4 w-4 flex-shrink-0" />}
+          href={`/uni`}
+        />
       </NavigationSection>
     </nav>
   );
