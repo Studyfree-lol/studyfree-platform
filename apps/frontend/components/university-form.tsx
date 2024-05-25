@@ -92,7 +92,7 @@ export default function UniversityForm() {
           name="country"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Country</FormLabel>
               <FormControl>
                 <Input placeholder="DE" {...field} />
               </FormControl>
@@ -108,7 +108,7 @@ export default function UniversityForm() {
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>City</FormLabel>
               <FormControl>
                 <Input placeholder="Munich" {...field} />
               </FormControl>
@@ -122,7 +122,7 @@ export default function UniversityForm() {
           name="language"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Language</FormLabel>
               <FormControl>
                 <Input placeholder="de-DE" {...field} />
               </FormControl>
