@@ -338,11 +338,13 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     "model.CourseSearchResult": {
+      query: string;
       limit: number;
       processingTimeMs: number;
       hits: components["schemas"]["model.CourseSearchPreview"][];
     };
     "model.UniversitySearchResult": {
+      query: string;
       limit: number;
       processingTimeMs: number;
       hits: components["schemas"]["model.UniversitySearchPreview"][];

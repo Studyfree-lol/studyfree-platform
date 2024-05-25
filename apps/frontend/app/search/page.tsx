@@ -30,6 +30,7 @@ export default function Search() {
     hits: [],
     limit: 0,
     processingTimeMs: 0,
+    query: "",
   });
 
   const updateSearchResults = async (q: string) => {

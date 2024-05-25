@@ -329,10 +329,13 @@ components:
     model.CourseSearchResult:
       type: object
       required:
+        - query
         - limit
         - processingTimeMs
         - hits
       properties:
+        query:
+          type: string
         limit:
           type: integer
         processingTimeMs:
@@ -344,10 +347,13 @@ components:
     model.UniversitySearchResult:
       type: object
       required:
+        - query
         - limit
         - processingTimeMs
         - hits
       properties:
+        query:
+          type: string
         limit:
           type: integer
         processingTimeMs:

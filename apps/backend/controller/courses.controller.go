@@ -50,7 +50,7 @@ func (ctr *Controller) PostUniversitiesUniversityIdCourses(c *fiber.Ctx, univers
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
-		defer ctr.coursesSearchIndex.Delete(uniId)
+		defer ctr.coursesSearchIndex.Delete(courseId)
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
