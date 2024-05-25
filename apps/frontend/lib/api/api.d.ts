@@ -5,7 +5,7 @@
 
 
 export interface paths {
-  "/search": {
+  "/search/courses": {
     /** Search for courses */
     post: {
       parameters: {
@@ -18,7 +18,41 @@ export interface paths {
         /** @description OK */
         200: {
           content: {
-            "application/json": components["schemas"]["model.SearchResult"];
+            "application/json": components["schemas"]["model.CourseSearchResult"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+          };
+        };
+      };
+    };
+  };
+  "/search/universities": {
+    /** Search for universities */
+    post: {
+      parameters: {
+        query: {
+          /** @description Search Query */
+          q: string;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["model.UniversitySearchResult"];
           };
         };
         /** @description Bad Request */
@@ -303,10 +337,15 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    "model.SearchResult": {
+    "model.CourseSearchResult": {
       limit: number;
       processingTimeMs: number;
       hits: components["schemas"]["model.CourseSearchPreview"][];
+    };
+    "model.UniversitySearchResult": {
+      limit: number;
+      processingTimeMs: number;
+      hits: components["schemas"]["model.UniversitySearchPreview"][];
     };
     "model.UniversityPreview": {
       /** Format: uuid */
@@ -344,6 +383,13 @@ export interface components {
       universityName: string;
       universityNameShort: string;
       universityCountry: string;
+    };
+    "model.UniversitySearchPreview": {
+      title: string;
+      /** Format: uuid */
+      id: string;
+      nameShort: string;
+      country: string;
     };
     "model.Document": {
       title: string;

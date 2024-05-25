@@ -15,6 +15,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { api } from "@/lib/api";
+import { UniversitySelector } from "./university-selector";
 
 const formSchema = z.object({
   universityId: z.string().uuid(),
@@ -56,10 +57,11 @@ export default function CourseForm() {
             <FormItem>
               <FormLabel>University</FormLabel>
               <FormControl>
-                <Input
+                <UniversitySelector {...field} />
+                {/* <Input
                   placeholder="Technical University of Munich"
                   {...field}
-                />
+                /> */}
               </FormControl>
               <FormDescription>
                 The University hosting the course

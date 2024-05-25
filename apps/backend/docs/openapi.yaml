@@ -4,9 +4,9 @@ info:
   description: Studyfree API
   version: 1.0.0
 servers:
-  - url: 'https'
+  - url: "https"
 paths:
-  /search:
+  /search/courses:
     post:
       tags:
         - search
@@ -24,16 +24,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.SearchResult"
+                $ref: "#/components/schemas/model.CourseSearchResult"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
+
+  /search/universities:
+    post:
+      tags:
+        - search
+      summary: Search for universities
+      parameters:
+        - name: q
+          description: Search Query
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.UniversitySearchResult"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
 
   /universities:
     get:
@@ -66,13 +95,13 @@ paths:
                       $ref: "#/components/schemas/model.UniversityPreview"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
     post:
       tags:
         - universities
@@ -110,13 +139,13 @@ paths:
                   $ref: "#/components/schemas/model.UniversityPreview"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
   /universities/{universityId}:
     get:
@@ -140,13 +169,13 @@ paths:
                 $ref: "#/components/schemas/model.University"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
   /universities/{universityId}/courses:
     post:
@@ -184,13 +213,13 @@ paths:
                   $ref: "#/components/schemas/model.CoursePreview"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
   /courses/{courseId}:
     get:
@@ -215,13 +244,13 @@ paths:
                   $ref: "#/components/schemas/model.Course"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
   /courses/{courseId}/documents:
     get:
@@ -246,13 +275,13 @@ paths:
                   $ref: "#/components/schemas/model.Document"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
     post:
       tags:
         - documents
@@ -287,17 +316,17 @@ paths:
                   $ref: "#/components/schemas/model.Document"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
 components:
   schemas:
-    model.SearchResult:
+    model.CourseSearchResult:
       type: object
       required:
         - limit
@@ -312,6 +341,21 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/model.CourseSearchPreview"
+    model.UniversitySearchResult:
+      type: object
+      required:
+        - limit
+        - processingTimeMs
+        - hits
+      properties:
+        limit:
+          type: integer
+        processingTimeMs:
+          type: integer
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/model.UniversitySearchPreview"
     model.UniversityPreview:
       type: object
       required:
@@ -408,6 +452,23 @@ components:
         universityNameShort:
           type: string
         universityCountry:
+          type: string
+    model.UniversitySearchPreview:
+      type: object
+      required:
+        - title
+        - id
+        - nameShort
+        - country
+      properties:
+        title:
+          type: string
+        id:
+          type: string
+          format: uuid
+        nameShort:
+          type: string
+        country:
           type: string
     model.Document:
       type: object

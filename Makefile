@@ -11,3 +11,18 @@ gen-meili-apikey:
     	    "indexes": ["courses", "universities"], \
     	    "expiresAt": "2042-04-02T00:42:42Z" \
     	  }'
+
+up:
+	docker-compose up
+
+deps:
+	docker-compose up -d postgres minio meilisearch
+
+be:
+	docker-compose up -d postgres minio meilisearch backend --build --force-recreate
+
+dev-be:
+	cd apps/backend && go run main.go
+
+dev-fe:
+	cd apps/frontend && pnpm dev

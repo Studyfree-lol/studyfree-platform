@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 
 async function fetchSearchResults(q: string) {
-  return await api.POST("/search", {
+  return await api.POST("/search/courses", {
     params: {
       query: {
         q,
@@ -25,7 +25,7 @@ export default function Search() {
   const query = searchParams.get("q");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<
-    components["schemas"]["model.SearchResult"]
+    components["schemas"]["model.CourseSearchResult"]
   >({
     hits: [],
     limit: 0,
