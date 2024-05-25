@@ -10,14 +10,18 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/meilisearch/meilisearch-go"
 	"os"
 )
 
 func main() {
 	port := os.Getenv("PORT")
-	dbUrl := os.Getenv("DB")
+	corsOrigins := os.Getenv("CORS")
+	postgresUrl := os.Getenv("POSTGRES_URL")
+	meilisearchUrl := os.Getenv("MEILISEARCH_URL")
+	meilisearchApiKey := os.Getenv("MEILISEARCH_API_KEY")
 
-	conn, err := pgxpool.New(context.Background(), dbUrl)
+	conn, err := pgxpool.New(context.Background(), postgresUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -26,15 +30,22 @@ func main() {
 
 	queries := database.New(conn)
 
+	meilisearchClient := meilisearch.NewClient(meilisearch.ClientConfig{
+		Host:   meilisearchUrl,
+		APIKey: meilisearchApiKey,
+	})
+
 	f := fiber.New(fiber.Config{
 		CaseSensitive: true,
 		StrictRouting: true,
 		AppName:       "Studyfree API",
 	})
 
-	c := controller.New(conn, queries)
+	c := controller.New(conn, queries, meilisearchClient)
 
-	f.Use(cors.New())
+	f.Use(cors.New(cors.Config{
+		AllowOrigins: corsOrigins,
+	}))
 
 	f.Use(healthcheck.New(healthcheck.Config{
 		LivenessProbe: func(c *fiber.Ctx) bool {

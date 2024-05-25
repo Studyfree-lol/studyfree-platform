@@ -1,29 +1,24 @@
-import type { Metadata } from "next";
+"use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  BellIcon,
-  GithubIcon,
-  MenuIcon,
-  SearchIcon,
-  SunIcon,
-} from "lucide-react";
+import { BellIcon, GithubIcon, MenuIcon, SearchIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import UploadCard from "@/components/upload-card";
 import Navigation from "@/components/navigation";
 import DarkmodeToggle from "@/components/darkmode-toggle";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SearchInput } from "@/components/search-input";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Studyfree - Free Document Sharing Platform",
-  description: "Studyfree is a free document sharing platform for students.",
-};
+// export const metadata: Metadata = {
+//   title: "Studyfree - Free Document Sharing Platform",
+//   description: "Studyfree is a free document sharing platform for students.",
+// };
 
 export default function RootLayout({
   children,
@@ -93,16 +88,9 @@ export default function RootLayout({
                   </SheetContent>
                 </Sheet>
                 <div className="w-full flex justify-between">
-                  <form className="w-full">
-                    <div className="relative">
-                      <SearchIcon className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                        placeholder="Search course..."
-                        type="search"
-                      />
-                    </div>
-                  </form>
+                  <div className="w-96">
+                    <SearchInput />
+                  </div>
                   <div className="flex gap-1">
                     <Link
                       target="_blank"

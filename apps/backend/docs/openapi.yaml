@@ -4,20 +4,130 @@ info:
   description: Studyfree API
   version: 1.0.0
 servers:
-  - url: 'https'
+  - url: "https"
 paths:
+  /search/courses:
+    post:
+      tags:
+        - search
+      summary: Search for courses
+      parameters:
+        - name: q
+          description: Search Query
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.CourseSearchResult"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+
+  /search/universities:
+    post:
+      tags:
+        - search
+      summary: Search for universities
+      parameters:
+        - name: q
+          description: Search Query
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.UniversitySearchResult"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+
   /universities:
     get:
       tags:
         - universities
-      summary: Get all Universities
-      description: retrieve all universities
+      summary: Get Universities
       parameters:
-        - name: search
+        - name: page
           required: false
           in: query
           schema:
-            type: string
+            type: number
+            default: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - totalPages
+                  - items
+                properties:
+                  totalPages:
+                    type: integer
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/model.UniversityPreview"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - universities
+      summary: Create new University
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - nameShort
+                - country
+                - city
+                - language
+              properties:
+                name:
+                  type: string
+                nameShort:
+                  type: string
+                country:
+                  type: string
+                city:
+                  type: string
+                language:
+                  type: string
       responses:
         "200":
           description: OK
@@ -29,13 +139,13 @@ paths:
                   $ref: "#/components/schemas/model.UniversityPreview"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
 
   /universities/{universityId}:
     get:
@@ -56,18 +166,120 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/model.UniversityPreview"
+                $ref: "#/components/schemas/model.University"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
+          content: {}
+
+  /universities/{universityId}/courses:
+    post:
+      tags:
+        - courses
+      summary: Create new Course for University
+      parameters:
+        - name: universityId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - nameShort
+              properties:
+                name:
+                  type: string
+                nameShort:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.CoursePreview"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
+
+  /courses/{courseId}:
+    get:
+      tags:
+        - courses
+      summary: Get a specific course
+      parameters:
+        - name: courseId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.Course"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
 
   /courses/{courseId}/documents:
+    get:
+      tags:
+        - documents
+      summary: Get documents for a specific course
+      parameters:
+        - name: courseId
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/model.Document"
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "500":
+          description: Internal Server Error
+          content: {}
     post:
       tags:
         - documents
@@ -102,56 +314,74 @@ paths:
                   $ref: "#/components/schemas/model.Document"
         "400":
           description: Bad Request
-          content: { }
+          content: {}
         "404":
           description: Not Found
-          content: { }
+          content: {}
         "500":
           description: Internal Server Error
-          content: { }
-    get:
-      tags:
-        - documents
-      summary: Get specific Document
-      description: retrieve a meta information about a specific document
-      parameters:
-        - name: courseId
-          required: true
-          in: path
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/model.Document"
-        "400":
-          description: Bad Request
-          content: { }
-        "404":
-          description: Not Found
-          content: { }
-        "500":
-          description: Internal Server Error
-          content: { }
+          content: {}
 
 components:
   schemas:
+    model.CourseSearchResult:
+      type: object
+      required:
+        - query
+        - limit
+        - processingTimeMs
+        - hits
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+        processingTimeMs:
+          type: integer
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/model.CourseSearchPreview"
+    model.UniversitySearchResult:
+      type: object
+      required:
+        - query
+        - limit
+        - processingTimeMs
+        - hits
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+        processingTimeMs:
+          type: integer
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/model.UniversitySearchPreview"
     model.UniversityPreview:
       type: object
       required:
         - id
-        - title
+        - name
+        - nameShort
+        - country
+        - city
+        - language
       properties:
         id:
           type: string
           format: uuid
-        title:
+        name:
+          type: string
+        nameShort:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        language:
           type: string
     model.University:
       allOf:
@@ -168,24 +398,82 @@ components:
       type: object
       required:
         - id
-        - title
+        - name
+        - nameShort
       properties:
         id:
           type: string
           format: uuid
-        title:
+        name:
+          type: string
+        nameShort:
           type: string
     model.Course:
       allOf:
         - $ref: "#/components/schemas/model.CoursePreview"
         - type: object
           required:
-            - documents
+            - university
           properties:
-            documents:
-              type: array
-              items:
-                $ref: "#/components/schemas/model.Document"
+            university:
+              $ref: "#/components/schemas/model.CourseUniversityPreview"
+    model.CourseUniversityPreview:
+      type: object
+      required:
+        - id
+        - name
+        - nameShort
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameShort:
+          type: string
+    model.CourseSearchPreview:
+      type: object
+      required:
+        - id
+        - title
+        - nameShort
+        - universityId
+        - universityName
+        - universityNameShort
+        - universityCountry
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        nameShort:
+          type: string
+        universityId:
+          type: string
+        universityName:
+          type: string
+        universityNameShort:
+          type: string
+        universityCountry:
+          type: string
+    model.UniversitySearchPreview:
+      type: object
+      required:
+        - title
+        - id
+        - nameShort
+        - country
+      properties:
+        title:
+          type: string
+        id:
+          type: string
+          format: uuid
+        nameShort:
+          type: string
+        country:
+          type: string
     model.Document:
       type: object
       required:
