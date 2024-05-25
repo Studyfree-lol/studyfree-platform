@@ -12,7 +12,7 @@ export default function CourseTable({ university }: UniversityTableProps) {
 
   return (
     <div>
-      <ul className="container mb-7 divide-y divide-gray-200 dark:divide-gray-700">
+      <ul className="container mb-7">
         {university.courses.map((c) => (
           <li key={c.id} className="pb-3 sm:pb-4">
             <Button
