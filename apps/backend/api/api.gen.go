@@ -44,6 +44,13 @@ type ModelCourseSearchPreview struct {
 	UniversityNameShort string             `json:"universityNameShort"`
 }
 
+// ModelCourseSearchResult defines model for model.CourseSearchResult.
+type ModelCourseSearchResult struct {
+	Hits             []ModelCourseSearchPreview `json:"hits"`
+	Limit            int                        `json:"limit"`
+	ProcessingTimeMs int                        `json:"processingTimeMs"`
+}
+
 // ModelCourseUniversityPreview defines model for model.CourseUniversityPreview.
 type ModelCourseUniversityPreview struct {
 	Id        openapi_types.UUID `json:"id"`
@@ -57,13 +64,6 @@ type ModelDocument struct {
 	Tag      string `json:"tag"`
 	ThumbUrl string `json:"thumbUrl"`
 	Title    string `json:"title"`
-}
-
-// ModelSearchResult defines model for model.SearchResult.
-type ModelSearchResult struct {
-	Hits             []ModelCourseSearchPreview `json:"hits"`
-	Limit            int                        `json:"limit"`
-	ProcessingTimeMs int                        `json:"processingTimeMs"`
 }
 
 // ModelUniversity defines model for model.University.
@@ -87,13 +87,34 @@ type ModelUniversityPreview struct {
 	NameShort string             `json:"nameShort"`
 }
 
+// ModelUniversitySearchPreview defines model for model.UniversitySearchPreview.
+type ModelUniversitySearchPreview struct {
+	Country   string             `json:"country"`
+	Id        openapi_types.UUID `json:"id"`
+	NameShort string             `json:"nameShort"`
+	Title     string             `json:"title"`
+}
+
+// ModelUniversitySearchResult defines model for model.UniversitySearchResult.
+type ModelUniversitySearchResult struct {
+	Hits             []ModelUniversitySearchPreview `json:"hits"`
+	Limit            int                            `json:"limit"`
+	ProcessingTimeMs int                            `json:"processingTimeMs"`
+}
+
 // PostCoursesCourseIdDocumentsParams defines parameters for PostCoursesCourseIdDocuments.
 type PostCoursesCourseIdDocumentsParams struct {
 	Name string `form:"name" json:"name"`
 }
 
-// PostSearchParams defines parameters for PostSearch.
-type PostSearchParams struct {
+// PostSearchCoursesParams defines parameters for PostSearchCourses.
+type PostSearchCoursesParams struct {
+	// Q Search Query
+	Q string `form:"q" json:"q"`
+}
+
+// PostSearchUniversitiesParams defines parameters for PostSearchUniversities.
+type PostSearchUniversitiesParams struct {
 	// Q Search Query
 	Q string `form:"q" json:"q"`
 }
@@ -136,8 +157,11 @@ type ServerInterface interface {
 	// (POST /courses/{courseId}/documents)
 	PostCoursesCourseIdDocuments(c *fiber.Ctx, courseId openapi_types.UUID, params PostCoursesCourseIdDocumentsParams) error
 	// Search for courses
-	// (POST /search)
-	PostSearch(c *fiber.Ctx, params PostSearchParams) error
+	// (POST /search/courses)
+	PostSearchCourses(c *fiber.Ctx, params PostSearchCoursesParams) error
+	// Search for universities
+	// (POST /search/universities)
+	PostSearchUniversities(c *fiber.Ctx, params PostSearchUniversitiesParams) error
 	// Get Universities
 	// (GET /universities)
 	GetUniversities(c *fiber.Ctx, params GetUniversitiesParams) error
@@ -231,13 +255,13 @@ func (siw *ServerInterfaceWrapper) PostCoursesCourseIdDocuments(c *fiber.Ctx) er
 	return siw.Handler.PostCoursesCourseIdDocuments(c, courseId, params)
 }
 
-// PostSearch operation middleware
-func (siw *ServerInterfaceWrapper) PostSearch(c *fiber.Ctx) error {
+// PostSearchCourses operation middleware
+func (siw *ServerInterfaceWrapper) PostSearchCourses(c *fiber.Ctx) error {
 
 	var err error
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params PostSearchParams
+	var params PostSearchCoursesParams
 
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
@@ -260,7 +284,39 @@ func (siw *ServerInterfaceWrapper) PostSearch(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter q: %w", err).Error())
 	}
 
-	return siw.Handler.PostSearch(c, params)
+	return siw.Handler.PostSearchCourses(c, params)
+}
+
+// PostSearchUniversities operation middleware
+func (siw *ServerInterfaceWrapper) PostSearchUniversities(c *fiber.Ctx) error {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostSearchUniversitiesParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Required query parameter "q" -------------
+
+	if paramValue := c.Query("q"); paramValue != "" {
+
+	} else {
+		err = fmt.Errorf("Query argument q is required, but not found")
+		c.Status(fiber.StatusBadRequest).JSON(err)
+		return err
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "q", query, &params.Q)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter q: %w", err).Error())
+	}
+
+	return siw.Handler.PostSearchUniversities(c, params)
 }
 
 // GetUniversities operation middleware
@@ -352,7 +408,9 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/courses/:courseId/documents", wrapper.PostCoursesCourseIdDocuments)
 
-	router.Post(options.BaseURL+"/search", wrapper.PostSearch)
+	router.Post(options.BaseURL+"/search/courses", wrapper.PostSearchCourses)
+
+	router.Post(options.BaseURL+"/search/universities", wrapper.PostSearchUniversities)
 
 	router.Get(options.BaseURL+"/universities", wrapper.GetUniversities)
 
@@ -367,25 +425,25 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xY32/bNhD+Vwhuj4Ltrt2L3lZ3G4JhrdfMT0UeGOlksZBIhT9SGIb+94E/LFMSFdtN",
-	"0jpDX4JYujve3ffx41E7nPG64QyYkjjdYZmVUBP7b81zqGZLroUE85tU1YcCp592+GcBBU7xT/OD79w7",
-	"zkOvlYB7Cl9wm+xwI3gDQlGwsTWj9yAkVVvz69R4686ri9wmWMCdpgJynH4K494kWG0bwCnmt58hU7i9",
-	"aRMcSy8dZkdz87fgoiYKp1hrmuMumlSCsg1uE8xIbRsTfXFdcqEibwcJ28g2UOg2zr2f+TUQkZVPkf9U",
-	"mglWVFXx8g5NXnLNlNgesbrKjxi8n2pk3+SclrrswxoHGY3Wj68Wq/YYOmOaviSGveOZroGpcdIFrWAt",
-	"qjhbyCb+vNT17aTTBMUGFeyx3K8fRHULTxfjNspHkLqKFFRSJ3pUQS3PEaL+/mu75YkQZGt+V7SmITaU",
-	"KdiAMK8awTOQkrLNv7SGv2XMatAAFy3imrgSputf93T2HAWPaO1IxTPbjK9r4WTzBrXv13hIzk/YcJlv",
-	"wYiD2QMSduIurQjbaLKZ3qnPs4UPuSeuvCCTcbdMTMoKblbLQWaCNopyhlN8rXS+LQQA+m111Unn+Llt",
-	"sfV4NVvMFqYG3gAjDcUpfj1bzF4bihJV2obPPXDznfvnKm/N4w3Yeg00xKxvzgb8JyhHCrn0tjaSIDUo",
-	"ENIylpqFTfR9K1KcHYwP3VJCQ+LHmBPQa2+Ms2w480T+ZbFw1GbKiyBpmopmNtv5Z2kasAvin038COPb",
-	"ZADJh7+M1RuXSv/VW5Kjj3CnQSpn82Zs854r9AfXLDcWv8aiXDEFgpEKXYO4B4F+F4I73ZG6ronZDwYV",
-	"RJBsIKMFzZDrtlNc2duZxi0C9zz3J4k8A/h3nc//kQHd2fqSONDBiAouHmTEAXCjzQ2XarzqSssSEcTg",
-	"SxcYKY5UCWhPqGTAkhWXF0CTxIe+02Al18f2sjwdN0o3i91bnm8fYFqTF32idRneUkZsDsPY7uD4weUo",
-	"lwPmdbnHuWv0TNoRzw4SnsdjUroxcEzBwflqrdA/njcxEt2dz6BHgHwc297YfKl4+r4aUTooxx5OD5/D",
-	"srvC+WFw6ixah3ZxYRkA15hhK8Qqh4LYu8arblcwXd/aof6xuA2ukPutesaejQ31o7uL4opUK7KBU64m",
-	"gXHiM4nPnhd6uA0g39Onx5jwMBuLwCDCadp+DNyvuq48+z3k0VeQb3g8nUD1C6XlUgBRYM+p4Po+yc2h",
-	"wM134Xeu8NLVT0WAEhTuAdWgCMqJIn6+O7gjyrJK55RtJmezgWqu+5/Yjo9mg29y32+KP4dRF61o3Xj+",
-	"BOSZB194TlPAkADLjjPfmgdPIcHPIpjfWRSPfXq7eEF0BVihitI7+CZhQtiYjnNaVDjFpVKNxO1N+18A",
-	"AAD//5XDgTj4GgAA",
+	"H4sIAAAAAAAC/+xYT4/bthP9KgJ/v6NgO0160a1x2mJRNHGz9SnYA1caWQwkUss/GxiGvntBUpYpirLl",
+	"XW/jDXpZrO3hcGbe45shdyhlVc0oUClQskMiLaDC5t+KZVDOlkxxAfozLstPOUq+7ND/OeQoQf+bH9bO",
+	"24Vzd9WKwyOBb6iJd6jmrAYuCRjfipJH4ILIrf401d+6W9V5bmLE4UERDhlKvrh+72IktzWgBLH7r5BK",
+	"1Nw1MQqFl/jRkUz/zRmvsEQJUopkqPMmJCd0g5oYUVyZwgR/uC0Yl4FfvYCNZ+PIXTaMvR/5LWCeFpeI",
+	"fyzMGEkiy3B6hyIvmaKSb09Y3WQnDD6OFbJvck5JbfRujl5Eg/3Du4WynYbOZxCqlENwCmJPGpFQiXPY",
+	"3we96YLAnOOt/lySirj1IVTCBrj+qeYsBSEI3fxNKvhThKy8MlpvgaWxTeFUFYaH9TWdsw8sVRXQAH45",
+	"KWHNy/CZwZvw94Wq7kcXjRw0L4M9o/f7O17txuPJrHtqe46OBxR3oOWpgftpnB5ls5f8fo9joj6BcGlb",
+	"ggEG6REhm8jSEtONwptxpr4MhQ+xxzY9J5IpjDjRSi5QmKe1mRH2d0Xws5+e6wWFeayMVyjO2gOhOdPO",
+	"MxApJ7UkjKIE3UqVbXMOEP2yuula5/B7k6lZ8Wa2mC105KwGimuCEvR2tpi91QFhWZgE5u2Rne/sPzdZ",
+	"o7/egCmCrjvW++vZAP0O0sqBWLa2xhPHFUjgwmgV0Rtr7/tDkKD0YHyojeQK4naMnUDP5k4vFjWjrYT9",
+	"tFhY3lPZyj+u65KkJtr5V6ELsHP8ny15Aa1rYg+ST39oq3c2lP5P73EWfYYHBUJam3dDm49MRr8xRTNt",
+	"8XPIyw2VwCkuo1vgj8CjXzlnlmVCVRXWB16jEuFI1JCSnKSRrbbtNaKnyXpZAO551vZQcQbwH7o1PyID",
+	"uqniNXGggzHKGT/KiAPguivXTMjhrislighHFL51jiPJIllAtCdU7LFkxcQV0CRuXT8oMM229d025HG/",
+	"QboZ7N6zbHuEaXWW94nWRXhPKDYx+L5tm/iPy0EuO8zrYg9zV+uZMA197gy3ez4PyWmb/7Kjr8dIr90a",
+	"4+ivlkYhTj2cT6hnYH7e/bOdnq4V5La6WqkOcrLH2GLaB7i73pNpKK9d+x8P6pFh+RXArfrABDH3wR4b",
+	"So6DHMKx1vctF7oMcmyuGW86eaSqujez/HNh9F5R9pr9pIvLkSuLZBKXK7yBKTcSxzhuIwlfQq50ylmH",
+	"6dNjjDvVDPXB8zCtyZ8C90kvFi/+FPHMV4h/dU6ZQPUrpeWSA5ZgBhbnBW+Um77AzXfug7d7++6HwkFy",
+	"Ao8QVSBxlGGJ20H/sDwiNC1VRuhmdEj3VHPdf2s/PaN7j/Pf7zp3DqOuWtG6e9oFyDNtDh4jwOhk/OI8",
+	"uIQEv4hgfmdRPPX6fvWCaBMwQhWkt/M4pV0Yn5ZzipcoQYWUtUDNXfNPAAAA//+aGKjeAR8AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

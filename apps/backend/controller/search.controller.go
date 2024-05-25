@@ -7,8 +7,19 @@ import (
 	"net/http"
 )
 
-func (ctr *Controller) PostSearch(c *fiber.Ctx, params api.PostSearchParams) error {
+func (ctr *Controller) PostSearchCourses(c *fiber.Ctx, params api.PostSearchCoursesParams) error {
 	searchRes, err := ctr.coursesSearchIndex.Search(params.Q, &meilisearch.SearchRequest{
+		AttributesToHighlight: []string{""},
+	})
+	if err != nil {
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	return c.JSON(searchRes)
+}
+
+func (ctr *Controller) PostSearchUniversities(c *fiber.Ctx, params api.PostSearchUniversitiesParams) error {
+	searchRes, err := ctr.universitiesSearchIndex.Search(params.Q, &meilisearch.SearchRequest{
 		AttributesToHighlight: []string{""},
 	})
 	if err != nil {
