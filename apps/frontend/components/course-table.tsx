@@ -19,7 +19,7 @@ export default function CourseTable({ university }: UniversityTableProps) {
               variant="ghost"
               className="w-full py-7 pl-2 pr-4 flex gap-4 items-center justify-start"
               onClick={() => {
-                router.push(`/uni/${university.id}/${c.id}`);
+                router.push(`/course/${c.id}`);
               }}
             >
               <div className="flex-shrink-0 flex-grow-0 w-10 h-10 flex justify-center items-center bg-gray-200 rounded-lg dark:bg-gray-700">

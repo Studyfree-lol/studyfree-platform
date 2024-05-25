@@ -55,7 +55,7 @@ export default function Navigation() {
             key={course.courseId}
             title={course.title}
             icon={<BookIcon className="h-4 w-4 flex-shrink-0" />}
-            href={`/uni/${course.universityId}/${course.courseId}`}
+            href={`/course/${course.courseId}`}
             trailing={
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

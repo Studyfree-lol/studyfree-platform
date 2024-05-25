@@ -9,7 +9,6 @@ type Store = {
 
 export interface PinnedCourse {
   courseId: string;
-  universityId: string;
   title: string;
 }
 

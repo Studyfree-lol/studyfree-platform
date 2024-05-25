@@ -239,9 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/model.Course"
+                $ref: "#/components/schemas/model.Course"
         "400":
           description: Bad Request
           content: {}

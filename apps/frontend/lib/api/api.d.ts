@@ -235,7 +235,7 @@ export interface paths {
         /** @description OK */
         200: {
           content: {
-            "application/json": components["schemas"]["model.Course"][];
+            "application/json": components["schemas"]["model.Course"];
           };
         };
         /** @description Bad Request */
