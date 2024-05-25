@@ -33,6 +33,17 @@ type ModelCoursePreview struct {
 	NameShort string             `json:"nameShort"`
 }
 
+// ModelCourseSearchPreview defines model for model.CourseSearchPreview.
+type ModelCourseSearchPreview struct {
+	Id                  openapi_types.UUID `json:"id"`
+	NameShort           string             `json:"nameShort"`
+	Title               string             `json:"title"`
+	UniversityCountry   string             `json:"universityCountry"`
+	UniversityId        string             `json:"universityId"`
+	UniversityName      string             `json:"universityName"`
+	UniversityNameShort string             `json:"universityNameShort"`
+}
+
 // ModelCourseUniversityPreview defines model for model.CourseUniversityPreview.
 type ModelCourseUniversityPreview struct {
 	Id        openapi_types.UUID `json:"id"`
@@ -46,6 +57,13 @@ type ModelDocument struct {
 	Tag      string `json:"tag"`
 	ThumbUrl string `json:"thumbUrl"`
 	Title    string `json:"title"`
+}
+
+// ModelSearchResult defines model for model.SearchResult.
+type ModelSearchResult struct {
+	Hits             []ModelCourseSearchPreview `json:"hits"`
+	Limit            int                        `json:"limit"`
+	ProcessingTimeMs int                        `json:"processingTimeMs"`
 }
 
 // ModelUniversity defines model for model.University.
@@ -72,6 +90,12 @@ type ModelUniversityPreview struct {
 // PostCoursesCourseIdDocumentsParams defines parameters for PostCoursesCourseIdDocuments.
 type PostCoursesCourseIdDocumentsParams struct {
 	Name string `form:"name" json:"name"`
+}
+
+// PostSearchParams defines parameters for PostSearch.
+type PostSearchParams struct {
+	// Q Search Query
+	Q string `form:"q" json:"q"`
 }
 
 // GetUniversitiesParams defines parameters for GetUniversities.
@@ -111,6 +135,9 @@ type ServerInterface interface {
 	// Push a new Document
 	// (POST /courses/{courseId}/documents)
 	PostCoursesCourseIdDocuments(c *fiber.Ctx, courseId openapi_types.UUID, params PostCoursesCourseIdDocumentsParams) error
+	// Search for courses
+	// (POST /search)
+	PostSearch(c *fiber.Ctx, params PostSearchParams) error
 	// Get Universities
 	// (GET /universities)
 	GetUniversities(c *fiber.Ctx, params GetUniversitiesParams) error
@@ -204,6 +231,38 @@ func (siw *ServerInterfaceWrapper) PostCoursesCourseIdDocuments(c *fiber.Ctx) er
 	return siw.Handler.PostCoursesCourseIdDocuments(c, courseId, params)
 }
 
+// PostSearch operation middleware
+func (siw *ServerInterfaceWrapper) PostSearch(c *fiber.Ctx) error {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostSearchParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Required query parameter "q" -------------
+
+	if paramValue := c.Query("q"); paramValue != "" {
+
+	} else {
+		err = fmt.Errorf("Query argument q is required, but not found")
+		c.Status(fiber.StatusBadRequest).JSON(err)
+		return err
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "q", query, &params.Q)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter q: %w", err).Error())
+	}
+
+	return siw.Handler.PostSearch(c, params)
+}
+
 // GetUniversities operation middleware
 func (siw *ServerInterfaceWrapper) GetUniversities(c *fiber.Ctx) error {
 
@@ -293,6 +352,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/courses/:courseId/documents", wrapper.PostCoursesCourseIdDocuments)
 
+	router.Post(options.BaseURL+"/search", wrapper.PostSearch)
+
 	router.Get(options.BaseURL+"/universities", wrapper.GetUniversities)
 
 	router.Post(options.BaseURL+"/universities", wrapper.PostUniversities)
@@ -306,22 +367,25 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"AAD//5XDgTj4GgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

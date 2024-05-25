@@ -5,6 +5,40 @@
 
 
 export interface paths {
+  "/search": {
+    /** Search for courses */
+    post: {
+      parameters: {
+        query: {
+          /** @description Search Query */
+          q: string;
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          content: {
+            "application/json": components["schemas"]["model.SearchResult"];
+          };
+        };
+        /** @description Bad Request */
+        400: {
+          content: {
+          };
+        };
+        /** @description Not Found */
+        404: {
+          content: {
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+          };
+        };
+      };
+    };
+  };
   "/universities": {
     /** Get Universities */
     get: {
@@ -269,6 +303,11 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    "model.SearchResult": {
+      limit: number;
+      processingTimeMs: number;
+      hits: components["schemas"]["model.CourseSearchPreview"][];
+    };
     "model.UniversityPreview": {
       /** Format: uuid */
       id: string;
@@ -295,6 +334,16 @@ export interface components {
       id: string;
       name: string;
       nameShort: string;
+    };
+    "model.CourseSearchPreview": {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      nameShort: string;
+      universityId: string;
+      universityName: string;
+      universityNameShort: string;
+      universityCountry: string;
     };
     "model.Document": {
       title: string;

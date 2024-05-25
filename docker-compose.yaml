@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_URL: postgres://postgres:mysecretpassword@postgres:5432/studyfree?sslmode=disable
       MEILISEARCH_URL: http://meilisearch:7700
-      MEILISEARCH_API_TOKEN: VERY_SECRET_TOKEN
+      MEILISEARCH_API_KEY: VERY_SECRET_TOKEN
       MINIO_URL: minio:9000
       MINIO_ACCESS_KEY_ID: VERY_SECRET_TOKEN
       MINIO_ACCESS_KEY_SECRET: VERY_SECRET_TOKEN

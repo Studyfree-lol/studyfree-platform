@@ -1,16 +1,25 @@
 "use client";
-import { SearchBox } from "react-instantsearch";
+import { SearchIcon } from "lucide-react";
+import { Input } from "./ui/input";
+import { useRouter } from "next/navigation";
+
 export function SearchInput() {
+  const router = useRouter();
+
+  const search = (formData: FormData) => {
+    const query = formData.get("query")?.toString() ?? "";
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
+
   return (
-    <SearchBox
-      classNames={{
-        root: "bg-gray-100 p-1 border border-gray-200 rounded-lg focus-within:border-black",
-        form: "flex items-center",
-        submit: "w-6 h-full",
-        input:
-          "py-2 px-2 grow bg-transparent focus:outline-none transition duration-200 ease-in-outs",
-      }}
-      placeholder="Search course..."
-    />
+    <form className="w-full relative" action={search}>
+      <SearchIcon className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
+      <Input
+        name="query"
+        className="left-0 right-0 appearance-none bg-background pl-8 shadow-none"
+        placeholder="Search course..."
+        type="search"
+      />
+    </form>
   );
 }

@@ -6,6 +6,35 @@ info:
 servers:
   - url: 'https'
 paths:
+  /search:
+    post:
+      tags:
+        - search
+      summary: Search for courses
+      parameters:
+        - name: q
+          description: Search Query
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/model.SearchResult"
+        "400":
+          description: Bad Request
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "500":
+          description: Internal Server Error
+          content: { }
+
   /universities:
     get:
       tags:
@@ -268,6 +297,21 @@ paths:
 
 components:
   schemas:
+    model.SearchResult:
+      type: object
+      required:
+        - limit
+        - processingTimeMs
+        - hits
+      properties:
+        limit:
+          type: integer
+        processingTimeMs:
+          type: integer
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/model.CourseSearchPreview"
     model.UniversityPreview:
       type: object
       required:
@@ -338,6 +382,32 @@ components:
         name:
           type: string
         nameShort:
+          type: string
+    model.CourseSearchPreview:
+      type: object
+      required:
+        - id
+        - title
+        - nameShort
+        - universityId
+        - universityName
+        - universityNameShort
+        - universityCountry
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        nameShort:
+          type: string
+        universityId:
+          type: string
+        universityName:
+          type: string
+        universityNameShort:
+          type: string
+        universityCountry:
           type: string
     model.Document:
       type: object
